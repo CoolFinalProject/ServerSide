@@ -5,24 +5,21 @@ import server.enums.UserRole;
 public class UserDto {
 	private String userName;
 	private String passWord;
-	private String userId;
+	private String userId; 
 	private boolean active;
 	private UserRole userRole;
 //	private HashMap<String, Float> genrePrefrences;
 	
 	public UserDto() {};
-	
-	
-	
-	public UserDto(String userName, String passWord, String userId, UserRole userRole) {
+
+	public UserDto(String userName, String passWord, String userId, boolean active, UserRole userRole) {
 	super();
 	this.userName = userName;
 	this.passWord = passWord;
 	this.userId = userId;
+	this.active = active;
 	this.userRole = userRole;
 }
-
-
 
 	public String getUserName() {
 		return userName;
@@ -52,11 +49,25 @@ public class UserDto {
 		this.userId = userId;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
+
+
+
+
+
 	@Override
 	public String toString() {
-		return "UserDto {userName: " + userName + ", passWord: " + passWord + ", userId: " + userId + ", userRole: "
-				+ userRole + "}";
+		return "UserDto [userName=" + userName + ", passWord=" + passWord + ", userId=" + userId + ", active=" + active
+				+ ", userRole=" + userRole + "]";
 	}
-	
+
 	
 }
