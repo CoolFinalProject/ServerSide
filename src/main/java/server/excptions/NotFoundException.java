@@ -3,12 +3,15 @@ package server.excptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.Serial;
+
 
 //Exception for when a requested resource is not found (HTTP 404).
 //This is used when a requested resource or data cannot be found.
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 public class NotFoundException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public NotFoundException() {
