@@ -6,6 +6,7 @@ public class UserDto {
 	private String userName;
 	private String passWord;
 	private String userId;
+	private boolean active;
 	private UserRole userRole;
 //	private HashMap<String, Float> genrePrefrences;
 	

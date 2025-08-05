@@ -24,7 +24,7 @@ public class UserController {
 	@PostMapping(path = "/AuthenticateByName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_PLAIN_VALUE)
 	public String authenticateByName(@RequestBody UserAuthenticateDto userAuthDto)
 	{
-		return userService.AuthenticateByName(userAuthDto);
+		return userService.authenticateByName(userAuthDto);
 	}
 	
 	
