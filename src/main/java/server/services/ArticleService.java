@@ -1,5 +1,7 @@
 package server.services;
 
-public interface ArticleService {
+import server.DTO.ArticleDto.ArticleDto;
 
+public interface ArticleService {
+	public ArticleDto getRawArticleData(String articleId);
 }
