@@ -1,5 +1,8 @@
 package server.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,5 +24,9 @@ public class ArticleController {
 	{
 		return articleService.getRawArticleData(articleId);
 	}
-	
+	@GetMapping(path="searchByText")
+	public ResponseEntity<List<ArticleDto>> getArticlesByText(@RequestParam(name = "text",required = false,defaultValue = "") String text)
+	{
+		return articleService.searchArticlesByText(text);
+	}
 }

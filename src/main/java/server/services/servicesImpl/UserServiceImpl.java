@@ -22,4 +22,9 @@ public class UserServiceImpl implements UserService{
 		throw new server.excptions.UnsupportedOperationException("getUserFromToken() "+ userTokenDto.toString());
 	}
 
+	@Override
+	public UserDto updateUserData(String id, UserDto userToUpdate) {
+		throw new server.excptions.UnsupportedOperationException("Unimplemented method 'updateUserData'");
+	}
+
 }
