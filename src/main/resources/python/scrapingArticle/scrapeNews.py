@@ -4,7 +4,7 @@ from data.articleObject import Article
 from urllib.parse import urlparse
 from data.config import SITE_CONFIG
 import sys
-
+import time
 argv = sys.argv
 if len(argv) != 2:
     print("One argument needed")
@@ -15,6 +15,7 @@ headers = {
 }
 
 response = requests.get(test_url, headers=headers)
+start = time.perf_counter()
 soup = BeautifulSoup(response.text, features="html.parser")
 domain = urlparse(test_url).netloc
 
@@ -43,6 +44,9 @@ if found == False:
 else:
     text = "\n".join(texts)
     article_obj = Article(title="Test",body=text)
+
+end =time.perf_counter()
+print(f"Elapsed time for BSoup only! {end - start :.6f} sec")
 print(article_obj)
 
 #print(soup.prettify())
