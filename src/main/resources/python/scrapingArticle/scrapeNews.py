@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from data.articleObject import Article
 from urllib.parse import urlparse
+from data.config import SITE_CONFIG
 import sys
 
 argv = sys.argv
@@ -18,20 +19,23 @@ soup = BeautifulSoup(response.text, features="html.parser")
 domain = urlparse(test_url).netloc
 
 found = False
-if 'ynet.co.il' in domain:
-    article_div = soup.find("div", class_="article-body")  # change selector based on site
-    texts = [span.get_text(strip=True) for span in article_div.find_all("span", attrs={"data-text": "true"})]
-    found = True
-elif "maariv.co.il" in domain:
-    container = soup.find("section", class_="article-body article-body-min-width")
+
+config = next((val for key, val in SITE_CONFIG.items() if key in domain), None)
+
+if config:
+    container_config= config["container"]
+    container = soup.find(container_config[0],class_=container_config[1]["class"])
     if container:
-        texts = [p.get_text(strip=True) for p in container.find_all("p")]
-        found = True
-elif "walla.co.il" in domain:
-    container = soup.find("article", class_="common-item")
-    if container:
-        texts = [p.get_text(strip=True) for p in container.find_all("p", class_="article_speakable")]
-        found = True
+        par_config = config["paragraphs"]
+        if "class" in par_config[1]:
+            my_class_ = class_=par_config[1]["class"]
+            my_attrs= {}
+        else:
+            my_class_ = None
+            my_attrs = par_config[1]
+        texts = [p.get_text(strip=True) for p in container.find_all(par_config[0],class_=my_class_,attrs=my_attrs)]
+        found=True
+        
 
 
 if found == False:
