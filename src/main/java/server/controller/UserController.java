@@ -2,7 +2,9 @@ package server.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,19 +13,26 @@ import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
 import server.DTO.UserDto.UserTokenDto;
 import server.services.UserService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 
 @RestController
 @RequestMapping(path = {"/users"})
 public class UserController {
-	private UserService userService;
+	private final UserService userService;
 	
 	public UserController(UserService userService) {
 		this.userService=userService;
 	}
+
+
+
+	@PostMapping(path = "/newUser",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+	public UserDto signUpUser(@RequestBody UserAuthenticateDto userAuthDto)
+	{
+		return userService.signUpUser(userAuthDto);
+	}
+
 	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_PLAIN_VALUE)
 	public String authenticateByName(@RequestBody UserAuthenticateDto userAuthDto)
 	{

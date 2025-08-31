@@ -10,7 +10,7 @@ public class UserDto {
 	private UserRole userRole;
 //	private HashMap<String, Float> genrePrefrences;
 	
-	public UserDto() {};
+	public UserDto() {active=true;};
 
 	public UserDto(String userName, String passWord, String userId, boolean active, UserRole userRole) {
 	super();
@@ -19,7 +19,7 @@ public class UserDto {
 	this.userId = userId;
 	this.active = active;
 	this.userRole = userRole;
-}
+	}
 
 	public String getUserName() {
 		return userName;
