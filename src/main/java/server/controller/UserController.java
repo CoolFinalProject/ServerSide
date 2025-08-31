@@ -33,8 +33,8 @@ public class UserController {
 		return userService.signUpUser(userAuthDto);
 	}
 
-	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_PLAIN_VALUE)
-	public String authenticateByName(@RequestBody UserAuthenticateDto userAuthDto)
+	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+	public UserDto authenticateByName(@RequestBody UserAuthenticateDto userAuthDto)
 	{
 		return userService.authenticateByName(userAuthDto);
 	}

@@ -7,7 +7,7 @@ import server.DTO.UserDto.UserTokenDto;
 
 public interface UserService {
 	public UserDto signUpUser(UserAuthenticateDto newUser);
-	public String authenticateByName(UserAuthenticateDto userAuthDto);
+	public UserDto authenticateByName(UserAuthenticateDto userAuthDto);
 	public UserDto getUserFromToken(UserTokenDto userTokenDto);
 	public UserDto updateUserData(String id,UserDto userToUpdate);
 }

@@ -1,5 +1,6 @@
 package server.services.servicesImpl;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
 import server.DTO.UserDto.UserTokenDto;
 import server.convertions.UserConvertion;
+import server.entities.UserEntities.UserEntity;
 import server.enums.UserRole;
 import server.repositories.UserRepository;
 import server.services.UserService;
@@ -23,9 +25,13 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public String authenticateByName(UserAuthenticateDto userAuthDto) 
+	public UserDto authenticateByName(UserAuthenticateDto userAuthDto) 
 	{	
-		throw new server.excptions.UnsupportedOperationException("authenticateByName() "+userAuthDto.toString());
+		Optional<UserEntity> entity=userRep.findByUserNameAndPassWord(userAuthDto.getUserName(), userAuthDto.getPassWord());
+		if (entity.isEmpty())
+			throw new server.excptions.NotFoundException("One or two fields are incorrect!");
+		else
+			return UserConvertion.userEntityToDto(entity.get());
 	}
 
 	@Override
