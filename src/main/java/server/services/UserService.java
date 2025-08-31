@@ -10,4 +10,11 @@ public interface UserService {
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto);
 	public UserDto getUserFromToken(UserTokenDto userTokenDto);
 	public UserDto updateUserData(String id,UserDto userToUpdate);
+
+
+/////
+/// 
+/// 
+
+	public void deleteAllUsers();
 }

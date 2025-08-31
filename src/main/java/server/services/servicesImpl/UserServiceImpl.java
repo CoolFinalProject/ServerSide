@@ -1,5 +1,6 @@
 package server.services.servicesImpl;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,9 +53,15 @@ public class UserServiceImpl implements UserService{
 		user.setPassWord(newUser.getPassWord());
 		user.setUserRole(UserRole.END_USER);
 		user.setUserId(UUID.randomUUID().toString());  
+		user.setCreationTime(new Date());
 		// by default active = true
 		userRep.save(UserConvertion.userDtoToEntity(user));
 		return user;
+	}
+
+	@Override
+	public void deleteAllUsers() {
+		userRep.deleteAll();
 	}
 
 }

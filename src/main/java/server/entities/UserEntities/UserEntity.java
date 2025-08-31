@@ -1,5 +1,7 @@
 package server.entities.UserEntities;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,13 +15,14 @@ public class UserEntity {
 	private String userId; 
 	private boolean active;
 	private UserRole userRole;
-
-    public UserEntity(String userName, String passWord, String userId, boolean active, UserRole userRole) {
+    private Date creationTime;
+    public UserEntity(String userName, String passWord, String userId, boolean active, UserRole userRole,Date creationTime) {
         this.active = active;
         this.passWord = passWord;
         this.userId = userId;
         this.userName = userName;
         this.userRole = userRole;
+        this.creationTime=creationTime;
     }
     public UserEntity(){};
 
@@ -53,10 +56,17 @@ public class UserEntity {
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+    
+    public Date getCreationTime() {
+        return creationTime;
+    }
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
     @Override
     public String toString() {
         return "UserEntity [userName=" + userName + ", passWord=" + passWord + ", userId=" + userId + ", active="
-                + active + ", userRole=" + userRole + "]";
+                + active + ", userRole=" + userRole + ", creationTime=" + creationTime + "]";
     }
 
 
