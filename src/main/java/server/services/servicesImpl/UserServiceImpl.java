@@ -13,18 +13,18 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public String authenticateByName(UserAuthenticateDto userAuthDto) 
 	{	
-		throw new server.excptions.UnsupportedOperationException("authenticateByName() "+userAuthDto.toString());
+		throw new server.exceptions.UnsupportedOperationException("authenticateByName() "+userAuthDto.toString());
 	}
 
 	@Override
 	public UserDto getUserFromToken(UserTokenDto userTokenDto) 
 	{
-		throw new server.excptions.UnsupportedOperationException("getUserFromToken() "+ userTokenDto.toString());
+		throw new server.exceptions.UnsupportedOperationException("getUserFromToken() "+ userTokenDto.toString());
 	}
 
 	@Override
 	public UserDto updateUserData(String id, UserDto userToUpdate) {
-		throw new server.excptions.UnsupportedOperationException("Unimplemented method 'updateUserData'");
+		throw new server.exceptions.UnsupportedOperationException("Unimplemented method 'updateUserData'");
 	}
 
 }

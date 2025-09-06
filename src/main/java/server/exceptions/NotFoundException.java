@@ -1,9 +1,9 @@
-package server.excptions;
+package server.exceptions;
+
+import java.io.Serial;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.io.Serial;
 
 
 //Exception for when a requested resource is not found (HTTP 404).

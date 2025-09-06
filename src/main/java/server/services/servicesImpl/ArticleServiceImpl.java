@@ -13,7 +13,7 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public ArticleDto getRawArticleData(String articleId) {
-		throw new server.excptions.UnsupportedOperationException("getRawArticleData "+articleId);
+		throw new server.exceptions.UnsupportedOperationException("getRawArticleData "+articleId);
 	}
 
 	@Override
