@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
 import server.DTO.UserDto.UserTokenDto;
+import server.DTO.UserDto.UserUpdateDto;
 import server.services.UserService;
 
 
@@ -39,8 +40,8 @@ public class UserController {
 		return userService.authenticateByName(userAuthDto);
 	}
 	@PutMapping(path = "updateUser/{id}")
-	public UserDto updateUserData(@PathVariable String id, @RequestBody UserDto entity) {
-		return entity;
+	public UserDto updateUserData(@PathVariable("id") String id, @RequestBody UserUpdateDto entity) {
+		return userService.updateUserData(id, entity);
 	}
 ///
 ///-------------NOTICE!!!!!!!!!!!!!!!!!-----------------

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
 import server.DTO.UserDto.UserTokenDto;
+import server.DTO.UserDto.UserUpdateDto;
 import server.convertions.UserConvertion;
 import server.entities.UserEntities.UserEntity;
 import server.enums.UserRole;
@@ -42,8 +43,18 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto updateUserData(String id, UserDto userToUpdate) {
-		throw new server.excptions.UnsupportedOperationException("Unimplemented method 'updateUserData'");
+	public UserDto updateUserData(String id, UserUpdateDto userToUpdate) 
+	{
+		UserEntity entity=userRep.findById(id).orElseThrow(()-> new server.excptions.NotFoundException("User "+id+" does not exist!"));
+
+		if (!userToUpdate.getUserName().isBlank())
+			entity.setUserName(userToUpdate.getUserName());
+		if (!userToUpdate.getPassWord().isBlank())
+			entity.setPassWord(userToUpdate.getPassWord());
+		entity.setActive(userToUpdate.isActive());
+		entity.setUserRole(userToUpdate.getUserRole());
+		userRep.save(entity);
+		return UserConvertion.userEntityToDto(entity);
 	}
 
 	@Override
