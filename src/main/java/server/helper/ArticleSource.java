@@ -1,7 +1,6 @@
 package server.helper;
 
 import java.util.Date;
-
 public class ArticleSource {
 	private String webSoucre;
 	private String author;
