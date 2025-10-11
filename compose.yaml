@@ -1,10 +1,9 @@
-
-#services:
-#  postgres:
-#    image: 'mongo:latest'
-#    environment:
-#      - 'MONGO_INITDB_DATABASE=sleepMonitoringDB'
-#      - 'MONGO_INITDB_ROOT_PASSWORD=integrative2025b'
-#      - 'MONGO_INITDB_ROOT_USERNAME=Claudia.Gendler'
-#    ports:
-#      - '27017:27017'
+services:
+  postgres:
+    image: 'mongo:latest'
+    environment:
+      - 'MONGO_INITDB_DATABASE=FinalProjectDB'
+      - 'MONGO_INITDB_ROOT_PASSWORD=lolcoolporject'
+      - 'MONGO_INITDB_ROOT_USERNAME=Cool.Group'
+    ports:
+      - '27017:27017'

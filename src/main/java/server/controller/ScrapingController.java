@@ -19,7 +19,6 @@ public class ScrapingController {
     {
         RssFetcher rssFetcher = new RssFetcher();
         return rssFetcher.fetchAndPrint("https://www.ynet.co.il/Integration/StoryRss2.xml");
-
     }
 
 }
