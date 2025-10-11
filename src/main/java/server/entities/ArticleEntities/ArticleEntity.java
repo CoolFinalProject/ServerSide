@@ -3,7 +3,7 @@ package server.entities.ArticleEntities;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
 
 import server.helper.ArticleSource;
 
@@ -14,7 +14,7 @@ import server.helper.ArticleSource;
 /// 
 /// 
 
-@Document(collection="articles")
+@RedisHash("articles")
 public class ArticleEntity {
 
     @Id
