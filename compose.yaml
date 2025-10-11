@@ -7,3 +7,7 @@ services:
       - 'MONGO_INITDB_ROOT_USERNAME=Cool.Group'
     ports:
       - '27017:27017'
+  redis:
+    image: 'redis:7'
+    ports:
+      - '6379:6379'
