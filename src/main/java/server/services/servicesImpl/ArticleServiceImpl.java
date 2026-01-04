@@ -23,33 +23,22 @@ public class ArticleServiceImpl implements ArticleService{
     private ArticleRepository articleRepository;
 	@Override
 	public ArticleDto getRawArticleData(String articleId) {
-		throw new server.exceptions.UnsupportedOperationException("getRawArticleData "+articleId);
+		throw new server.exceptions.UnsupportedOperationException("Unimplemented method 'getRawArticleData'("+articleId+")");
 	}
 
 	@Override
 	public ResponseEntity<List<ArticleDto>> searchArticlesByText(String text) {
-		throw new UnsupportedOperationException("Unimplemented method 'searchArticlesByText'");
+		throw new server.exceptions.UnsupportedOperationException("Unimplemented method 'searchArticlesByText'");
 	}
 
 	@Override
 	public List<ArticleDto> getAllArticles() {
-		/*	// Get all articles from Redis
-        @SuppressWarnings("unchecked")
-		List<ArticleEntity> articleEntities = (List<ArticleEntity>)(List<?>) redisTemplate.opsForHash().values(KEY);
-        
-        // Convert to DTOs
-        List<ArticleDto> articleDtos = articleEntities.stream()
-                .map(ArticleConvertion::entityToDto)
-                .collect(Collectors.toList());
-        
-        // Return the list of DTOs
-        return articleDtos;*/
-
     	Iterable<ArticleEntity> entities = articleRepository.findAll();
-
     	List<ArticleDto> articleDtos = new ArrayList<>();
+
     	for (ArticleEntity entity : entities) {
-			if (entity !=null)
+			/// NOTICE  --- entities that were removed after ttl expired will still exist as null in the repository!!
+			if (entity !=null)   
       			articleDtos.add(ArticleConvertion.entityToDto(entity));
     	}
 
@@ -59,9 +48,8 @@ public class ArticleServiceImpl implements ArticleService{
 	@Override
 	public void createSample() {
 		ArticleDto sample = new ArticleDto("IamCoolArticle", new ArticleSource("Ynet", "Me", new Date(), new Date()), "I am a title", "I am text", null);
-
 		ArticleEntity entity = ArticleConvertion.dtoToEntity(sample);
-
+		// default ttl is set in ArticleEntity
         articleRepository.save(entity);
 	}
 
