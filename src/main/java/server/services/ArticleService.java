@@ -9,4 +9,6 @@ import server.DTO.ArticleDto.ArticleDto;
 public interface ArticleService {
 	public ArticleDto getRawArticleData(String articleId);
 	public ResponseEntity<List<ArticleDto>> searchArticlesByText(String text);
+    public List<ArticleDto> getAllArticles();
+	public void createSample();
 }
