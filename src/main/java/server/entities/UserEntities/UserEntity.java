@@ -2,20 +2,27 @@ package server.entities.UserEntities;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+
 
 import server.enums.UserRole;
 
-@Document(collection="users")
+@Entity
+@Table(name = "USERS")
 public class UserEntity {
     private String userName;
 	private String passWord;
+
     @Id
-	private String userId; 
+	private String userId;
+
 	private boolean active;
-	private UserRole userRole;
+
+    @Enumerated(EnumType.STRING) private UserRole userRole;
+
     private Date creationTime;
+
+
     public UserEntity(String userName, String passWord, String userId, boolean active, UserRole userRole,Date creationTime) {
         this.active = active;
         this.passWord = passWord;
@@ -24,6 +31,7 @@ public class UserEntity {
         this.userRole = userRole;
         this.creationTime=creationTime;
     }
+
     public UserEntity(){};
 
     public String getUserName() {

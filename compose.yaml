@@ -1,9 +1,9 @@
 services:
   postgres:
-    image: 'mongo:latest'
+    image: 'postgres:latest'
     environment:
-      - 'MONGO_INITDB_DATABASE=FinalProjectDB'
-      - 'MONGO_INITDB_ROOT_PASSWORD=lolcoolporject'
-      - 'MONGO_INITDB_ROOT_USERNAME=Cool.Group'
+      - 'POSTGRES_DB=FinalProjectDB'
+      - 'POSTGRES_PASSWORD=lolcoolproject'
+      - 'POSTGRES_USER=noder_neder'
     ports:
-      - '27017:27017'
+      - '5432:5432'
