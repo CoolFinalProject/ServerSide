@@ -22,6 +22,7 @@ public class ArticleController {
 		this.articleService=articleService;
 	}
 
+	
 	@GetMapping(path = "getAllArticles",produces=MediaType.APPLICATION_JSON_VALUE)
 	public List<ArticleDto> getAllArticles()
 	{

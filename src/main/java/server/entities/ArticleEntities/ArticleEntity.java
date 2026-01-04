@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import server.helper.ArticleSource;
 
@@ -14,7 +15,7 @@ import server.helper.ArticleSource;
 /// 
 /// 
 
-@RedisHash("articles")
+@RedisHash(value="articles", timeToLive=10L)
 public class ArticleEntity {
 
     @Id
@@ -25,13 +26,17 @@ public class ArticleEntity {
 	private Map<String, Object> details;
 
 
+    @TimeToLive
+    private Long ttl; // seconds
+
     public ArticleEntity(){};
-    public ArticleEntity(String articleId, ArticleSource source, String title, String text, Map<String, Object> details) {
+    public ArticleEntity(String articleId, ArticleSource source, String title, String text, Map<String, Object> details,Long ttl) {
         this.articleId = articleId;
         this.source = source;
         this.title = title;
         this.text = text;
         this.details = details;
+        this.ttl=ttl;
     }
     public String getArticleId() {
         return articleId;
@@ -63,11 +68,19 @@ public class ArticleEntity {
     public void setDetails(Map<String, Object> details) {
         this.details = details;
     }
+
+    public Long getTtl() {
+        return ttl;
+    }
+    public void setTtl(Long ttl) {
+        this.ttl = ttl;
+    }
+	
     @Override
     public String toString() {
         return "ArticleEntity [articleId=" + articleId + ", source=" + source + ", title=" + title + ", text=" + text
                 + ", details=" + details + "]";
     }
-	
+
 	
 }

@@ -11,4 +11,5 @@ public interface ArticleService {
 	public ResponseEntity<List<ArticleDto>> searchArticlesByText(String text);
     public List<ArticleDto> getAllArticles();
 	public void createSample();
+	public void deleteAllArticles();
 }
