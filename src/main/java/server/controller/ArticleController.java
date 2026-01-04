@@ -2,6 +2,7 @@ package server.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,18 @@ public class ArticleController {
 	public ArticleController(ArticleService articleService)
 	{
 		this.articleService=articleService;
+	}
+
+	
+	@GetMapping(path = "getAllArticles",produces=MediaType.APPLICATION_JSON_VALUE)
+	public List<ArticleDto> getAllArticles()
+	{
+		return articleService.getAllArticles();
+	}
+	@GetMapping(path = "sample")
+	public void createSampleArticle()
+	{
+		articleService.createSample();
 	}
 	@GetMapping(path= "rawArticle/{articleId}")
 	public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId)
