@@ -20,7 +20,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.rometools:rome:2.1.0'
-	//removed key-value store dependency 
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    //removed key-value store dependency
 	//implementation 'org.springframework.data:spring-data-keyvalue'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation "com.openai:openai-java:0.9.0"
