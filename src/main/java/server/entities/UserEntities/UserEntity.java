@@ -16,6 +16,7 @@ public class UserEntity {
 	private boolean active;
 	private UserRole userRole;
     private Date creationTime;
+    //	private HashMap<String, Float> genrePrefrences;
     public UserEntity(String userName, String passWord, String userId, boolean active, UserRole userRole,Date creationTime) {
         this.active = active;
         this.passWord = passWord;
