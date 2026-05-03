@@ -15,7 +15,7 @@ import server.entities.UserEntities.UserEntity;
 import server.enums.UserRole;
 import server.repositories.UserRepository;
 import server.services.UserService;
-
+import java.util.Map;
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -69,7 +69,24 @@ public class UserServiceImpl implements UserService{
 		userRep.save(UserConvertion.userDtoToEntity(user));
 		return user;
 	}
+    @Override
+    public UserDto updateUserPreferences(String id, Map<String, Float> genrePreferences) {
+        UserEntity entity = userRep.findById(id)
+                .orElseThrow(() -> new server.exceptions.NotFoundException("User " + id + " does not exist!"));
 
+        entity.setGenrePreferences(genrePreferences);
+
+        UserEntity savedEntity = userRep.save(entity);
+
+        return UserConvertion.userEntityToDto(savedEntity);
+    }
+    @Override
+    public Map<String, Float> getUserPreferences(String id) {
+        UserEntity entity = userRep.findById(id)
+                .orElseThrow(() -> new server.exceptions.NotFoundException("User " + id + " does not exist!"));
+
+        return entity.getGenrePreferences();
+    }
 	@Override
 	public void deleteAllUsers() {
 		userRep.deleteAll();

@@ -15,6 +15,7 @@ import server.DTO.UserDto.UserTokenDto;
 import server.DTO.UserDto.UserUpdateDto;
 import server.services.UserService;
 
+import java.util.Map;
 
 
 @RestController
@@ -43,6 +44,17 @@ public class UserController {
 	public UserDto updateUserData(@PathVariable("id") String id, @RequestBody UserUpdateDto entity) {
 		return userService.updateUserData(id, entity);
 	}
+    @PutMapping(
+            path = "/{id}/preferences",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public UserDto updateUserPreferences(
+            @PathVariable("id") String id,
+            @RequestBody Map<String, Float> genrePreferences
+    ) {
+        return userService.updateUserPreferences(id, genrePreferences);
+    }
 ///
 ///-------------NOTICE!!!!!!!!!!!!!!!!!-----------------
 /// authentication with tokens should not be implemented this way!
@@ -55,5 +67,11 @@ public class UserController {
 	{
 		return userService.getUserFromToken(new UserTokenDto(token));
 	}
-	
+    @GetMapping(
+            path = "/{id}/preferences",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Map<String, Float> getUserPreferences(@PathVariable("id") String id) {
+        return userService.getUserPreferences(id);
+    }
 }
