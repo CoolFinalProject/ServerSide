@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import server.services.ArticleService;
 import server.services.UserService;
 
 ///  ADMIN CONTROLER API -- 
@@ -21,14 +22,21 @@ import server.services.UserService;
 @RequestMapping(path = {"admin"})
 public class AdminController {
     UserService userService;
+    ArticleService articleService;
 
-    public AdminController(UserService userService)
+    public AdminController(UserService userService,ArticleService articleService)
     {
         this.userService=userService;
+        this.articleService=articleService;
     }
     @DeleteMapping(path="deleteAllUsers")
     public void deleteAllUsers()
     {
         userService.deleteAllUsers();
+    }
+     @DeleteMapping(path="deleteAllArticles")
+    public void deleteAllArticles()
+    {
+        articleService.deleteAllArticles();
     }
 }

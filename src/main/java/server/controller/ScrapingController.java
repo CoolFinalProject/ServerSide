@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import server.helper.ArticleSource;
 import server.helper.RssFetcher;
 
-
 @RestController
 @RequestMapping(path = {"/scrape"})
 public class ScrapingController {
