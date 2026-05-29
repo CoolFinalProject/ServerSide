@@ -29,10 +29,11 @@ public class UserController {
 
 
 
-	@PostMapping(path = "/newUser",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto signUpUser(@RequestBody UserAuthenticateDto userAuthDto)
+	@PostMapping(path = "/newUser",produces = MediaType.APPLICATION_JSON_VALUE)
+	public UserDto signUpUser(@RequestHeader(name="Authorization",required=false) String header)
 	{
-		return userService.signUpUser(userAuthDto);
+		String token = header.replace("Bearer ", "");
+		return userService.signUpUser(token);
 	}
 
 	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +73,8 @@ public class UserController {
             path = "/{id}/preferences",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Map<String, Float> getUserPreferences(@PathVariable("id") String id) {
-        return userService.getUserPreferences(id);
+    public Map<String, Float> getUserPreferences(@RequestHeader(name="Authorization",required=false) String header) {
+		String token = header.replace("Bearer ", "");
+        return userService.getUserPreferences(token);
     }
 }
