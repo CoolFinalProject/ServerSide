@@ -37,24 +37,27 @@ public class UserController {
 	}
 
 	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+	@Deprecated
 	public UserDto authenticateByName(@RequestBody UserAuthenticateDto userAuthDto)
 	{
 		return userService.authenticateByName(userAuthDto);
 	}
 	@PutMapping(path = "updateUser/{id}")
+	@Deprecated
 	public UserDto updateUserData(@PathVariable("id") String id, @RequestBody UserUpdateDto entity) {
 		return userService.updateUserData(id, entity);
 	}
     @PutMapping(
-            path = "/{id}/preferences",
+            path = "/preferences",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public UserDto updateUserPreferences(
-            @PathVariable("id") String id,
+            @RequestHeader(name="Authorization",required=false) String header,
             @RequestBody Map<String, Float> genrePreferences
     ) {
-        return userService.updateUserPreferences(id, genrePreferences);
+		String token = header.replace("Bearer ", "");
+        return userService.updateUserPreferences(token, genrePreferences);
     }
 ///
 ///-------------NOTICE!!!!!!!!!!!!!!!!!-----------------
@@ -70,7 +73,7 @@ public class UserController {
 		return userService.getUserFromToken(token);
 	}
     @GetMapping(
-            path = "/{id}/preferences",
+            path = "/preferences",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Map<String, Float> getUserPreferences(@RequestHeader(name="Authorization",required=false) String header) {

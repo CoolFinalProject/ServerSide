@@ -9,9 +9,9 @@ import server.DTO.UserDto.UserUpdateDto;
 public interface UserService {
 	public UserDto signUpUser(String token);
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto);
-	public UserDto getUserFromToken(String idToken);
+	public UserDto getUserFromToken(String token);
 	public UserDto updateUserData(String id,UserUpdateDto userToUpdate);
-    public UserDto updateUserPreferences(String id, Map<String, Float> genrePreferences);
+    public UserDto updateUserPreferences(String token, Map<String, Float> genrePreferences);
     public Map<String, Float> getUserPreferences(String token);
 
 /////

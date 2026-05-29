@@ -28,6 +28,24 @@ public class UserServiceImpl implements UserService{
 		this.userRep=userRep;
 	}
 
+	private UserEntity getUserEntityFromToken(String token)
+	{
+		FirebaseToken decodedToken=getDecodedToken(token);
+		// we normally wont get NotFound exception here as all users in firebase should be in data base
+		return userRep.findById(decodedToken.getUid()).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server"));
+
+	}
+	private FirebaseToken getDecodedToken(String token)
+	{
+		FirebaseToken decodedToken;
+		try {
+			decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+			return decodedToken;
+		} catch (FirebaseAuthException e) {			
+			throw new server.exceptions.BadRequestException("Invalid token "+token);
+		}
+	}
+
 	@Override
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto) 
 	{	
@@ -41,19 +59,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserDto getUserFromToken(String idToken) 
 	{
-		FirebaseToken decodedToken;
-		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-			
-		} catch (FirebaseAuthException e) {
-			
-			e.printStackTrace();
-			throw new server.exceptions.BadRequestException("Invalid token "+idToken);
-		}
-		
-		String uid = decodedToken.getUid();
-		UserEntity user=userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User Not found with corresponding token "+uid ));
-		return UserConvertion.userEntityToDto(user);
+		return UserConvertion.userEntityToDto(getUserEntityFromToken(idToken));
 	}
 
 	@Override
@@ -74,15 +80,8 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserDto signUpUser(String token) {
 		
-		FirebaseToken decodedToken;
-		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-		} catch (FirebaseAuthException e) {
-			e.printStackTrace();
-			throw new server.exceptions.BadRequestException("Invalid token "+token);
-		}
+		FirebaseToken decodedToken=getDecodedToken(token);
 		UserDto user=new UserDto();
-		System.out.println("GOOOD");
 		user.setUserName(decodedToken.getName());
 		user.setPassWord("");
 		user.setUserRole(UserRole.END_USER);
@@ -93,12 +92,9 @@ public class UserServiceImpl implements UserService{
 		return user;
 	}
     @Override
-    public UserDto updateUserPreferences(String id, Map<String, Float> genrePreferences) {
-        UserEntity entity = userRep.findById(id)
-                .orElseThrow(() -> new server.exceptions.NotFoundException("User " + id + " does not exist!"));
-
+    public UserDto updateUserPreferences(String token, Map<String, Float> genrePreferences) {
+        UserEntity entity = getUserEntityFromToken(token);
         entity.setGenrePreferences(genrePreferences);
-
         UserEntity savedEntity = userRep.save(entity);
 
         return UserConvertion.userEntityToDto(savedEntity);
