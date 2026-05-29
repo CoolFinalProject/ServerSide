@@ -1,21 +1,21 @@
 package server.controller;
 
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
-import server.DTO.UserDto.UserTokenDto;
 import server.DTO.UserDto.UserUpdateDto;
 import server.services.UserService;
-
-import java.util.Map;
 
 
 @RestController
@@ -62,10 +62,11 @@ public class UserController {
 /// get reworked and done properly in the future
 ///
 ///
-	@GetMapping(path="/auth/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto authenticateByToken(@PathVariable("token") String token)
+	@GetMapping(path="/authByToken",produces = MediaType.APPLICATION_JSON_VALUE)
+	public UserDto authenticateByToken(@RequestHeader(name="Authorization",required=false) String header)
 	{
-		return userService.getUserFromToken(new UserTokenDto(token));
+		String token = header.replace("Bearer ", "");
+		return userService.getUserFromToken(token);
 	}
     @GetMapping(
             path = "/{id}/preferences",

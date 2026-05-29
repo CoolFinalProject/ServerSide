@@ -1,21 +1,24 @@
 package server.services.servicesImpl;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+
 import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
-import server.DTO.UserDto.UserTokenDto;
 import server.DTO.UserDto.UserUpdateDto;
 import server.convertions.UserConvertion;
 import server.entities.UserEntities.UserEntity;
 import server.enums.UserRole;
 import server.repositories.UserRepository;
 import server.services.UserService;
-import java.util.Map;
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -37,9 +40,20 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto getUserFromToken(UserTokenDto userTokenDto) 
+	public UserDto getUserFromToken(String idToken) 
 	{
-		throw new server.exceptions.UnsupportedOperationException("getUserFromToken() "+ userTokenDto.toString());
+		FirebaseToken decodedToken;
+		try {
+			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+		} catch (FirebaseAuthException e) {
+			
+			e.printStackTrace();
+			throw new server.exceptions.BadRequestException("Invalid token "+idToken);
+		}
+		
+		String uid = decodedToken.getUid();
+		userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User Not found with corresponding token "+uid ));
+		throw new server.exceptions.UnsupportedOperationException("getUserFromToken() "+ idToken.toString());
 	}
 
 	@Override
