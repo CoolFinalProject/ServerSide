@@ -2,7 +2,7 @@ package server.helper;
 
 import java.util.Date;
 public class ArticleSource {
-	private String webSoucre;
+	private String webSource;
 	private String author;
 	private Date publishDate;
 	private Date scrapeDate;
@@ -11,18 +11,18 @@ public class ArticleSource {
 	
 	public ArticleSource() {};
 	
-	public ArticleSource(String webSoucre, String author, Date publishDate, Date scrapeDate) {
+	public ArticleSource(String webSource, String author, Date publishDate, Date scrapeDate) {
 		super();
-		this.webSoucre = webSoucre;
+		this.webSource = webSource;
 		this.author = author;
 		this.publishDate = publishDate;
 		this.scrapeDate = scrapeDate;
 	}
-	public String getWebSoucre() {
-		return webSoucre;
+	public String getWebSource() {
+		return webSource;
 	}
-	public void setWebSoucre(String webSoucre) {
-		this.webSoucre = webSoucre;
+	public void setWebSource(String webSource) {
+		this.webSource = webSource;
 	}
 	public String getAuthor() {
 		return author;
@@ -44,7 +44,7 @@ public class ArticleSource {
 	}
 	@Override
 	public String toString() {
-		return "ArticleSource [webSoucre=" + webSoucre + ", author=" + author + ", publishDate=" + publishDate
+		return "ArticleSource [webSoucre=" + webSource + ", author=" + author + ", publishDate=" + publishDate
 				+ ", scrapeDate=" + scrapeDate + "]";
 	}
 	

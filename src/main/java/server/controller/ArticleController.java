@@ -1,5 +1,7 @@
 package server.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -11,15 +13,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import server.DTO.ArticleDto.ArticleDto;
+import server.DTO.ArticleDto.SummarizedArticleDto;
+import server.helper.ArticleSource;
+import server.helper.OpenAiService;
+import server.helper.RssFetcher;
 import server.services.ArticleService;
+import server.services.ScrapeService;
 
 @RestController
 @RequestMapping(path= {"/article"})
 public class ArticleController {
 	ArticleService articleService;
-	public ArticleController(ArticleService articleService)
+	ScrapeService scrapeService;
+	OpenAiService openAi;
+
+	public ArticleController(ArticleService articleService,ScrapeService scrapeService,OpenAiService openAi)
 	{
 		this.articleService=articleService;
+		this.scrapeService=scrapeService;
+		this.openAi=openAi;
 	}
 
 	
@@ -49,4 +61,20 @@ public class ArticleController {
 	{
 		return null;
 	}
+
+	@GetMapping(path= "testArticleSummarise")
+	public List<SummarizedArticleDto> getArticleSummarised()
+    {
+		RssFetcher rssFetcher = new RssFetcher();
+        List<ArticleSource> sources= new ArrayList<ArticleSource>(Arrays.asList(rssFetcher.fetchAndPrint("https://www.ynet.co.il/Integration/StoryRss2.xml")[0]) );
+		List<ArticleDto> articles = scrapeService.scrapeArticles(sources);
+		List<SummarizedArticleDto> sumArticles= new ArrayList<>();
+		for (ArticleDto article : articles) 
+		{
+			SummarizedArticleDto temp= new SummarizedArticleDto(article);
+			temp.setSummarizedText(openAi.summarizeNeutral(article.getText()));
+			sumArticles.add(temp);	
+		}
+        return sumArticles;
+    }
 }

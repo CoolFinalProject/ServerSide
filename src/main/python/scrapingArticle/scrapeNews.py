@@ -46,8 +46,8 @@ else:
     article_obj = Article(title="Test",body=text)
 
 end =time.perf_counter()
-print(f"Elapsed time for BSoup only! {end - start :.6f} sec")
-print(f"Proccessing speed: {1/(end-start):.6f} articles per second")
-print(article_obj)
+#print(f"Elapsed time for BSoup only! {end - start :.6f} sec")
+#print(f"Proccessing speed: {1/(end-start):.6f} articles per second")
+print(article_obj.body)
 
 #print(soup.prettify())

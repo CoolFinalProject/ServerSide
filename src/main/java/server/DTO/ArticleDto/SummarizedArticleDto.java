@@ -16,6 +16,11 @@ public class SummarizedArticleDto extends ArticleDto{
 		this.forUserId = forUserId;
 		this.summarizedText = summarizedText;
 	}
+	public SummarizedArticleDto(ArticleDto article) {
+		super(article.getArticleId(), article.getSource(), article.getTitle(), article.getText(), article.getDetails());
+		this.forUserId = null;
+		this.summarizedText = null;
+	}
 
 	public String getForUserId() {
 		return forUserId;
