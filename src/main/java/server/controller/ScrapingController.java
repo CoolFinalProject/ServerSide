@@ -5,19 +5,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import server.helper.ArticleSource;
-import server.helper.RssFetcher;
+import server.services.RssService;
 
 @RestController
 @RequestMapping(path = {"/scrape"})
 public class ScrapingController {
-    
 
+    private final RssService rssService;
 
-    @GetMapping(path="RSS")
-    public ArticleSource[] scrapeRssData()
-    {
-        RssFetcher rssFetcher = new RssFetcher();
-        return rssFetcher.fetchAndPrint("https://www.ynet.co.il/Integration/StoryRss2.xml");
+    public ScrapingController(RssService rssService) {
+        this.rssService = rssService;
     }
 
+    @GetMapping(path = "RSS")
+    public ArticleSource[] scrapeRssData() {
+        return rssService.fetchYnetRss();
+    }
 }
