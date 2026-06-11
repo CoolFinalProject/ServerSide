@@ -6,7 +6,7 @@ public class ArticleSource {
 	private String author;
 	private Date publishDate;
 	private Date scrapeDate;
-	
+    private String title;
 	
 	
 	public ArticleSource() {};
@@ -18,6 +18,12 @@ public class ArticleSource {
 		this.publishDate = publishDate;
 		this.scrapeDate = scrapeDate;
 	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public String getTitle() {
+        return title;
+    }
 	public String getWebSource() {
 		return webSource;
 	}
@@ -42,14 +48,12 @@ public class ArticleSource {
 	public void setScrapeDate(Date scrapeDate) {
 		this.scrapeDate = scrapeDate;
 	}
-	@Override
-	public String toString() {
-		return "ArticleSource [webSoucre=" + webSource + ", author=" + author + ", publishDate=" + publishDate
-				+ ", scrapeDate=" + scrapeDate + "]";
-	}
-	
-	
-	
-	
-	
+    @Override
+    public String toString() {
+        return "ArticleSource [title=" + title
+                + ", webSource=" + webSource
+                + ", author=" + author
+                + ", publishDate=" + publishDate
+                + ", scrapeDate=" + scrapeDate + "]";
+    }
 }

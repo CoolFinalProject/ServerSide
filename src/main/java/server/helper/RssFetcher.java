@@ -23,6 +23,7 @@ public class RssFetcher {
             ArticleSource[] articleSources = new ArticleSource[entries.size()];
             for (int i = 0; i < entries.size(); i++) {
                 articleSources[i] = new ArticleSource();
+                articleSources[i].setTitle(entries.get(i).getTitle());
                 articleSources[i].setWebSource(entries.get(i).getLink());
                 articleSources[i].setAuthor(entries.get(i).getAuthor());
                 articleSources[i].setPublishDate(entries.get(i).getPublishedDate());
