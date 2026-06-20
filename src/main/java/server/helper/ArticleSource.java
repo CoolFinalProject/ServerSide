@@ -7,7 +7,7 @@ public class ArticleSource {
 	private Date publishDate;
 	private Date scrapeDate;
     private String title;
-	
+    private String link;
 	
 	public ArticleSource() {};
 	
@@ -30,6 +30,8 @@ public class ArticleSource {
 	public void setWebSource(String webSource) {
 		this.webSource = webSource;
 	}
+    public String getLink() { return link; }
+    public void setLink(String link) { this.link = link; }
 	public String getAuthor() {
 		return author;
 	}

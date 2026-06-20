@@ -6,4 +6,6 @@ public interface RssService {
 
     ArticleSource[] fetchYnetRss();
     void fetchAndSaveYnetRss();
+
+    void removeDuplicateArticles();
 }

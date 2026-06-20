@@ -15,7 +15,7 @@ import server.helper.ArticleSource;
 /// 
 /// 
 
-@RedisHash(value="articles", timeToLive=10L)
+@RedisHash(value="articles", timeToLive=86400L)
 public class ArticleEntity {
 
     @Id

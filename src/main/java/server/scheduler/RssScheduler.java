@@ -9,13 +9,20 @@ import server.services.RssService;
 public class RssScheduler {
 
     private final RssService rssService;
+    private boolean firstRun = true;
 
     public RssScheduler(RssService rssService) {
         this.rssService = rssService;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 60000)
     public void fetchRssEveryFiveMinutes() {
+
+        if (firstRun) {
+            rssService.removeDuplicateArticles();
+            firstRun = false;
+        }
+
         rssService.fetchAndSaveYnetRss();
     }
 }
