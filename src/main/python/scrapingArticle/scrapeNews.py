@@ -4,6 +4,7 @@ from data.articleObject import Article
 from urllib.parse import urlparse
 from data.config import SITE_CONFIG
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 import time
 argv = sys.argv
 if len(argv) != 2:

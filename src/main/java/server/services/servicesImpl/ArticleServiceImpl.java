@@ -14,17 +14,26 @@ import server.entities.ArticleEntities.ArticleEntity;
 import server.helper.ArticleSource;
 import server.repositories.ArticleRepository;
 import server.services.ArticleService;
-
+import server.helper.OpenAiService;
+import server.services.ScrapeService;
+import server.DTO.ArticleDto.SummarizedArticleDto;
 @Service
 public class ArticleServiceImpl implements ArticleService{
 
 	
     @Autowired
     private ArticleRepository articleRepository;
-	@Override
-	public ArticleDto getRawArticleData(String articleId) {
-		throw new server.exceptions.UnsupportedOperationException("Unimplemented method 'getRawArticleData'("+articleId+")");
-	}
+    @Autowired
+    private OpenAiService openAiService;
+    @Autowired
+    private ScrapeService scrapeService;
+    @Override
+    public ArticleDto getRawArticleData(String articleId) {
+        ArticleEntity entity = articleRepository.findById(articleId)
+                .orElseThrow(() -> new RuntimeException("Article not found: " + articleId));
+
+        return ArticleConvertion.entityToDto(entity);
+    }
 
 	@Override
 	public ResponseEntity<List<ArticleDto>> searchArticlesByText(String text) {
@@ -57,5 +66,47 @@ public class ArticleServiceImpl implements ArticleService{
 	public void deleteAllArticles() {
 		articleRepository.deleteAll();
 	}
+
+    @Override
+    public List<SummarizedArticleDto> pipelineTest() {
+
+        List<ArticleDto> articles = getAllArticles();
+
+        List<SummarizedArticleDto> summarizedArticles = new ArrayList<>();
+
+        int count = 0;
+
+        for (ArticleDto article : articles) {
+
+            if (count >= 5) {
+                break;
+            }
+
+            List<ArticleSource> sources = new ArrayList<>();
+            sources.add(article.getSource());
+
+            List<ArticleDto> scrapedArticles = scrapeService.scrapeArticles(sources);
+
+            if (scrapedArticles.isEmpty()) {
+                continue;
+            }
+
+            ArticleDto scrapedArticle = scrapedArticles.get(0);
+            String text = scrapedArticle.getText();
+
+            if (text == null || text.isBlank()) {
+                continue;
+            }
+
+            SummarizedArticleDto summarizedArticle = new SummarizedArticleDto(article);
+            summarizedArticle.setText(text);
+            summarizedArticle.setSummarizedText(openAiService.summarizeNeutral(text));
+
+            summarizedArticles.add(summarizedArticle);
+            count++;
+        }
+
+        return summarizedArticles;
+    }
 
 }

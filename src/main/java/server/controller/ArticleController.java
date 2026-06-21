@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestHeader;
 import server.DTO.ArticleDto.ArticleDto;
 import server.DTO.ArticleDto.SummarizedArticleDto;
 import server.helper.ArticleSource;
@@ -45,11 +45,11 @@ public class ArticleController {
 	{
 		articleService.createSample();
 	}
-	@GetMapping(path= "rawArticle/{articleId}")
-	public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId)
-	{
-		return articleService.getRawArticleData(articleId);
-	}
+    @GetMapping(path= "rawArticle")
+    public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId)
+    {
+        return articleService.getRawArticleData(articleId);
+    }
 	@GetMapping(path="searchByText")
 	public ResponseEntity<List<ArticleDto>> getArticlesByText(@RequestParam(name = "text",required = false,defaultValue = "") String text)
 	{
@@ -76,5 +76,11 @@ public class ArticleController {
 			sumArticles.add(temp);	
 		}
         return sumArticles;
+    }
+    @GetMapping("/pipeline_test")
+    public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
+            @RequestHeader(name = "Authorization", required = false) String header) {
+
+        return ResponseEntity.ok(articleService.pipelineTest());
     }
 }
