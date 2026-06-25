@@ -82,7 +82,24 @@ public class OpenAiService {
     public List<ArticleCategory> classifyCategories(String title, String description, String url) {
         String prompt = """
                 Classify the following news article into exactly one category:
-                GENERAL, POLITICS, WORLD, SECURITY, CRIME, LAW, BUSINESS, TECHNOLOGY, SCIENCE, HEALTH, SPORTS, ENTERTAINMENT, CELEBRITIES, CULTURE, FOOD, TRAVEL, LIFESTYLE, EDUCATION, ENVIRONMENT.
+                    GENERAL, 
+                    POLITICS,
+                    MILITARY,
+                    WAR,
+                    WORLD,
+                    BUSINESS,
+                    TECHNOLOGY,
+                    SCIENCE,
+                    SPORTS,
+                    HEALTH,
+                    ENTERTAINMENT,
+                    CELEBRITIES,
+                    CULTURE,
+                    FOOD,
+                    TRAVEL,
+                    LIFESTYLE,
+                    EDUCATION,
+                    ENVIRONMENT.
 
                 Return one or two category names only.
                 If two categories are appropriate, separate them with a comma.

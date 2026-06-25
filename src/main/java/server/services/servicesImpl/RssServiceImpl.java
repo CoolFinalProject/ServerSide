@@ -9,6 +9,7 @@ import server.helper.RssFetcher;
 import server.repositories.ArticleRepository;
 import server.services.RssService;
 import server.enums.ArticleCategory;
+import server.helper.OpenAiService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,9 @@ public class RssServiceImpl implements RssService {
 
     @Autowired
     private ArticleRepository articleRepository;
+
+    @Autowired
+    private OpenAiService openAiService;
 
     private final RssFetcher rssFetcher = new RssFetcher();
 
@@ -91,7 +95,22 @@ public class RssServiceImpl implements RssService {
             entity.setTitle(article.getTitle());
             entity.setText(null);
             entity.setDetails(null);
-            entity.setCategories(List.of(ArticleCategory.GENERAL));
+            try {
+                List<ArticleCategory> categories = openAiService.classifyCategories(
+                        article.getTitle(),
+                        article.getDescription(),
+                        article.getWebSource()
+                );
+
+                if (categories == null || categories.isEmpty()) {
+                    categories = List.of(ArticleCategory.GENERAL);
+                }
+
+                entity.setCategories(categories);
+
+            } catch (Exception e) {
+                entity.setCategories(List.of(ArticleCategory.GENERAL));
+            }
             articleRepository.save(entity);
             saved++;
         }

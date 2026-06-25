@@ -3,6 +3,8 @@ package server.enums;
 public enum ArticleCategory {
     GENERAL,
     POLITICS,
+    MILITARY,
+    WAR,
     WORLD,
     BUSINESS,
     TECHNOLOGY,
