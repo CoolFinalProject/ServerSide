@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import server.helper.ArticleSource;
 import server.services.RssService;
 
 @RestController
@@ -18,7 +17,8 @@ public class ScrapingController {
     }
 
     @GetMapping(path = "RSS")
-    public ArticleSource[] scrapeRssData() {
-        return rssService.fetchYnetRss();
+    public String scrapeRssData() {
+        rssService.fetchAndSaveAllRssSources();
+        return "RSS sources fetched and saved successfully";
     }
 }

@@ -1,9 +1,10 @@
 package server.DTO.ArticleDto;
 
+import java.util.List;
 import java.util.Map;
 
 import server.helper.ArticleSource;
-
+import server.enums.ArticleCategory;
 public class ArticleDto {
 
 	private String articleId; //UUId
@@ -11,16 +12,17 @@ public class ArticleDto {
 	private String title;
 	private String text;
 	private Map<String, Object> details;
-	
+    private List<ArticleCategory> categories;
 	
 	public ArticleDto() {};
-	public ArticleDto(String articleId, ArticleSource source, String title, String text, Map<String, Object> details) {
+	public ArticleDto(String articleId, ArticleSource source, String title, String text, Map<String, Object> details,  List<ArticleCategory> categories) {
 		super();
 		this.articleId = articleId;
 		this.source = source;
 		this.title = title;
 		this.text = text;
 		this.details = details;
+        this.categories = categories;
 	}
 	public String getArticleId() {
 		return articleId;
@@ -52,6 +54,8 @@ public class ArticleDto {
 	public void setDetails(Map<String, Object> details) {
 		this.details = details;
 	}
+    public List<ArticleCategory> getCategories() { return categories; }
+    public void setCategories(List<ArticleCategory> categories) { this.categories = categories; }
 	@Override
 	public String toString() {
 		return "ArticleDto [articleId=" + articleId + ", source=" + source + ", title=" + title + ", text=" + text

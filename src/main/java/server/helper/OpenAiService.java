@@ -5,13 +5,15 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
+import java.util.List;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
+import server.enums.ArticleCategory;
 
 @Service
 public class OpenAiService {
@@ -37,6 +39,7 @@ public class OpenAiService {
         try {
             ObjectNode root = om.createObjectNode();
             root.put("model", "gpt-4o-mini");
+            root.put("temperature", 0);
             ArrayNode messages = root.putArray("messages");
             ObjectNode user = om.createObjectNode();
             user.put("role", "user");
@@ -74,5 +77,40 @@ public class OpenAiService {
                 Text:
                 """ + text;
         return chat(prompt);
+    }
+
+    public List<ArticleCategory> classifyCategories(String title, String description, String url) {
+        String prompt = """
+                Classify the following news article into exactly one category:
+                GENERAL, POLITICS, WORLD, SECURITY, CRIME, LAW, BUSINESS, TECHNOLOGY, SCIENCE, HEALTH, SPORTS, ENTERTAINMENT, CELEBRITIES, CULTURE, FOOD, TRAVEL, LIFESTYLE, EDUCATION, ENVIRONMENT.
+
+                Return one or two category names only.
+                If two categories are appropriate, separate them with a comma.
+                Examples:
+                SPORTS
+                TECHNOLOGY,BUSINESS
+                GENERAL
+
+            Title: %s
+            Description: %s
+            Url: %s
+            """.formatted(title, description, url);
+
+        String result = chat(prompt).trim().toUpperCase();
+
+        List<ArticleCategory> categories = new ArrayList<>();
+
+        for (String value : result.split(",")) {
+            try {
+                categories.add(ArticleCategory.valueOf(value.trim()));
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (categories.isEmpty()) {
+            categories.add(ArticleCategory.GENERAL);
+        }
+
+        return categories;
     }
 }

@@ -11,6 +11,7 @@ public static ArticleDto entityToDto(ArticleEntity entity) {
         dto.setTitle(entity.getTitle());
         dto.setText(entity.getText());
         dto.setDetails(entity.getDetails());
+        dto.setCategories(entity.getCategories());
         return dto;
     }
 
@@ -21,6 +22,7 @@ public static ArticleDto entityToDto(ArticleEntity entity) {
         entity.setTitle(dto.getTitle());
         entity.setText(dto.getText());
         entity.setDetails(dto.getDetails());
+        entity.setCategories(dto.getCategories());
         return entity;
     }
 }

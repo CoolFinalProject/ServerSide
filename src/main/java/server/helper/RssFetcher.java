@@ -24,6 +24,9 @@ public class RssFetcher {
             for (int i = 0; i < entries.size(); i++) {
                 articleSources[i] = new ArticleSource();
                 articleSources[i].setTitle(entries.get(i).getTitle());
+                if (entries.get(i).getDescription() != null) {
+                    articleSources[i].setDescription(entries.get(i).getDescription().getValue());
+                }
                 articleSources[i].setWebSource(entries.get(i).getLink());
                 articleSources[i].setAuthor(entries.get(i).getAuthor());
                 articleSources[i].setPublishDate(entries.get(i).getPublishedDate());
@@ -33,6 +36,6 @@ public class RssFetcher {
         } catch (Exception e) {
             e.printStackTrace();
         }
-      throw new server.exceptions.NotFoundException("failed to fetch RSS data");
+        throw new server.exceptions.NotFoundException("failed to fetch RSS data");
     }
 }

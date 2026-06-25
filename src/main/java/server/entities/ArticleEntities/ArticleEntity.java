@@ -1,11 +1,12 @@
 package server.entities.ArticleEntities;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
-
+import server.enums.ArticleCategory;
 import server.helper.ArticleSource;
 
 ///
@@ -22,6 +23,7 @@ public class ArticleEntity {
     private String articleId; //UUId
 	private ArticleSource source;
 	private String title;
+    private List<ArticleCategory> categories;
 	private String text;
 	private Map<String, Object> details;
 
@@ -30,13 +32,16 @@ public class ArticleEntity {
     private Long ttl; // seconds
 
     public ArticleEntity(){};
-    public ArticleEntity(String articleId, ArticleSource source, String title, String text, Map<String, Object> details,Long ttl) {
+    public ArticleEntity(String articleId, ArticleSource source, String title, String text, Map<String, Object> details,Long ttl, List<ArticleCategory> categories) {
         this.articleId = articleId;
         this.source = source;
         this.title = title;
         this.text = text;
         this.details = details;
         this.ttl=ttl;
+        this.categories = categories;
+
+
     }
     public String getArticleId() {
         return articleId;
@@ -68,6 +73,8 @@ public class ArticleEntity {
     public void setDetails(Map<String, Object> details) {
         this.details = details;
     }
+    public List<ArticleCategory> getCategories() { return categories;}
+    public void setCategories(List<ArticleCategory> categories) { this.categories = categories; }
 
     public Long getTtl() {
         return ttl;

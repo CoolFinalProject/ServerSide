@@ -23,6 +23,6 @@ public class RssScheduler {
             firstRun = false;
         }
 
-        rssService.fetchAndSaveYnetRss();
+        rssService.fetchAndSaveAllRssSources();
     }
 }

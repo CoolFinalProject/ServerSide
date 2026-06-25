@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public void createSample() {
-		ArticleDto sample = new ArticleDto("IamCoolArticle", new ArticleSource("Ynet", "Me", new Date(), new Date()), "I am a title", "I am text", null);
+		ArticleDto sample = new ArticleDto("IamCoolArticle", new ArticleSource("Ynet", "Me", new Date(), new Date()), "I am a title", "I am text", null, null);
 		ArticleEntity entity = ArticleConvertion.dtoToEntity(sample);
 		// default ttl is set in ArticleEntity
         articleRepository.save(entity);
