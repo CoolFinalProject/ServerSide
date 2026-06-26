@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService{
 	private UserEntity getUserEntityFromToken(String token)
 	{
 		FirebaseToken decodedToken=getDecodedToken(token);
-		// we normally wont get NotFound exception here as all users in firebase should be in data base
+		// we normally won't get NotFound exception here as all users in firebase should be in database
 		return userRep.findById(decodedToken.getUid()).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server"));
 
 	}

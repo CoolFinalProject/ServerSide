@@ -16,7 +16,7 @@ public class RssScheduler {
     }
 
     @Scheduled(fixedRate = 60000)
-    public void fetchRssEveryFiveMinutes() {
+    public void fetchRssEveryClockTick() {
 
         if (firstRun) {
             rssService.removeDuplicateArticles();

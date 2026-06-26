@@ -70,7 +70,7 @@ public class OpenAiService {
         }
     }
 
-    /** דוגמת עיבוד: סיכום טקסט קצר, ללא דעות. */
+
     public String summarizeNeutral(String text) {
         String prompt = """
                 Summarize the following content in 3 bullet points, remove opinions/emotion, keep facts only.
