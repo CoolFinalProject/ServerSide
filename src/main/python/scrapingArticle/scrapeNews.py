@@ -4,51 +4,61 @@ from data.articleObject import Article
 from urllib.parse import urlparse
 from data.config import SITE_CONFIG
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
 import time
+
+sys.stdout.reconfigure(encoding="utf-8")
+
 argv = sys.argv
+
 if len(argv) != 2:
     print("One argument needed")
     sys.exit()
+
 test_url = argv[1]
+
 headers = {
-    "user-agent": "Mozilla/5.0"  # Making out script look like browser
+    "user-agent": "Mozilla/5.0"
 }
 
 response = requests.get(test_url, headers=headers)
 start = time.perf_counter()
+
 soup = BeautifulSoup(response.text, features="html.parser")
 domain = urlparse(test_url).netloc
 
 found = False
+texts = []
 
 config = next((val for key, val in SITE_CONFIG.items() if key in domain), None)
 
+#print("domain:", domain, file=sys.stderr)
+#print("config:", config, file=sys.stderr)
+
 if config:
-    container_config= config["container"]
-    container = soup.find(container_config[0],class_=container_config[1]["class"])
+    container_config = config["container"]
+    container = soup.find(container_config[0], attrs=container_config[1])
+
+    #print("container found:", container is not None, file=sys.stderr)
+
     if container:
         par_config = config["paragraphs"]
-        if "class" in par_config[1]:
-            my_class_ = class_=par_config[1]["class"]
-            my_attrs= {}
-        else:
-            my_class_ = None
-            my_attrs = par_config[1]
-        texts = [p.get_text(strip=True) for p in container.find_all(par_config[0],class_=my_class_,attrs=my_attrs)]
-        found=True
-        
 
+        texts = [
+            p.get_text(strip=True)
+            for p in container.find_all(par_config[0], attrs=par_config[1])
+        ]
 
-if found == False:
+        #print("paragraphs found:", len(texts), file=sys.stderr)
+        #print("first paragraph:", texts[0] if texts else "NONE", file=sys.stderr)
+
+        found = len(texts) > 0
+
+if not found:
     article_obj = Article()
 else:
     text = "\n".join(texts)
-    article_obj = Article(title="Test",body=text)
+    article_obj = Article(title="Test", body=text)
 
-end =time.perf_counter()
-#print(f"Elapsed time for BSoup only! {end - start :.6f} sec")
-#print(f"Proccessing speed: {1/(end-start):.6f} articles per second")
+end = time.perf_counter()
+
 print(article_obj.body)
-
-#print(soup.prettify())

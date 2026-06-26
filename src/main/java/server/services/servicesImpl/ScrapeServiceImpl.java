@@ -28,7 +28,8 @@ public class ScrapeServiceImpl implements  ScrapeService{
             }
 
             try {
-                // Setup the command
+                System.out.println("URL to scrape: " + targetUrl);
+                System.out.println("Java working dir: " + System.getProperty("user.dir"));
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         "python", 
                         "src/main/python/scrapingArticle/scrapeNews.py", 
@@ -48,7 +49,6 @@ public class ScrapeServiceImpl implements  ScrapeService{
                 }
 
                 int exitCode = process.waitFor();
-
                 if (exitCode == 0) {
                     // Manually build the DTO since we only have the text
                     ArticleDto dto = new ArticleDto();

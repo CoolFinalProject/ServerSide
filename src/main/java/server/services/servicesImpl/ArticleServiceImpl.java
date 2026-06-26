@@ -3,6 +3,7 @@ package server.services.servicesImpl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +12,15 @@ import org.springframework.stereotype.Service;
 import server.DTO.ArticleDto.ArticleDto;
 import server.convertions.ArticleConvertion;
 import server.entities.ArticleEntities.ArticleEntity;
+import server.enums.ArticleCategory;
 import server.helper.ArticleSource;
 import server.repositories.ArticleRepository;
 import server.services.ArticleService;
 import server.helper.OpenAiService;
 import server.services.ScrapeService;
 import server.DTO.ArticleDto.SummarizedArticleDto;
+import server.services.UserService;
+
 @Service
 public class ArticleServiceImpl implements ArticleService{
 
@@ -27,6 +31,8 @@ public class ArticleServiceImpl implements ArticleService{
     private OpenAiService openAiService;
     @Autowired
     private ScrapeService scrapeService;
+    @Autowired
+    private UserService userService;
     @Override
     public ArticleDto getRawArticleData(String articleId) {
         ArticleEntity entity = articleRepository.findById(articleId)
@@ -68,7 +74,10 @@ public class ArticleServiceImpl implements ArticleService{
 	}
 
     @Override
-    public List<SummarizedArticleDto> pipelineTest() {
+    public List<SummarizedArticleDto> pipelineTest(String token) {
+
+        Map<String, Float> preferences = userService.getUserPreferences(token);
+        System.out.println("User preferences: " + preferences);
 
         List<ArticleDto> articles = getAllArticles();
 
@@ -82,12 +91,23 @@ public class ArticleServiceImpl implements ArticleService{
                 break;
             }
 
+            System.out.println("Checking article: " + article.getTitle());
+            System.out.println("Article categories: " + article.getCategories());
+
+            if (!matchesUserPreferences(article, preferences)) {
+                System.out.println("Skipped by preferences");
+                continue;
+            }
+
+            System.out.println("Matched preferences, trying scrape...");
+
             List<ArticleSource> sources = new ArrayList<>();
             sources.add(article.getSource());
 
             List<ArticleDto> scrapedArticles = scrapeService.scrapeArticles(sources);
 
             if (scrapedArticles.isEmpty()) {
+                System.out.println("Scrape returned empty");
                 continue;
             }
 
@@ -95,6 +115,7 @@ public class ArticleServiceImpl implements ArticleService{
             String text = scrapedArticle.getText();
 
             if (text == null || text.isBlank()) {
+                System.out.println("Scraped text is empty");
                 continue;
             }
 
@@ -107,6 +128,27 @@ public class ArticleServiceImpl implements ArticleService{
         }
 
         return summarizedArticles;
+    }
+
+    private boolean matchesUserPreferences(ArticleDto article, Map<String, Float> preferences) {
+
+        if (preferences == null || preferences.isEmpty()) {
+            return true;
+        }
+
+        if (article.getCategories() == null || article.getCategories().isEmpty()) {
+            return false;
+        }
+
+        for (ArticleCategory category : article.getCategories()) {
+            Float preferenceValue = preferences.get(category.name());
+
+            if (preferenceValue != null && preferenceValue > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

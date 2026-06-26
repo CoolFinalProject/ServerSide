@@ -13,5 +13,5 @@ public interface ArticleService {
     public List<ArticleDto> getAllArticles();
 	public void createSample();
 	public void deleteAllArticles();
-    List<SummarizedArticleDto> pipelineTest();
+    List<SummarizedArticleDto> pipelineTest(String token);
 }

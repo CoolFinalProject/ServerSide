@@ -1,6 +1,6 @@
 SITE_CONFIG = {
     "ynet.co.il": {
-        "container": ("div", {"class": "article-body"}),
+        "container": ("div", {"id": "ArticleBodyComponent"}),
         "paragraphs": ("span", {"data-text": "true"})
     },
     "maariv.co.il": {
@@ -10,5 +10,17 @@ SITE_CONFIG = {
     "walla.co.il": {
         "container": ("article", {"class": "common-item"}),
         "paragraphs": ("p", {"class": "article_speakable"})
+    },
+    "bbc.co.uk": {
+        "container": ("article", {}),
+        "paragraphs": ("p", {})
+    },
+    "bbc.com": {
+        "container": ("article", {}),
+        "paragraphs": ("p", {})
+    },
+    "israelhayom.co.il": {
+        "container": ("div", {"id": "text-content"}),
+        "paragraphs": ("p", {})
     }
 }

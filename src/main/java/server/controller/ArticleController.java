@@ -81,6 +81,12 @@ public class ArticleController {
     public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
             @RequestHeader(name = "Authorization", required = false) String header) {
 
-        return ResponseEntity.ok(articleService.pipelineTest());
+        if (header == null || header.isBlank()) {
+            throw new server.exceptions.BadRequestException("Missing Authorization header");
+        }
+
+        String token = header.replace("Bearer ", "");
+
+        return ResponseEntity.ok(articleService.pipelineTest(token));
     }
 }
