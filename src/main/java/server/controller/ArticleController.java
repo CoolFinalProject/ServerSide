@@ -77,7 +77,7 @@ public class ArticleController {
 		}
         return sumArticles;
     }
-    @GetMapping("/pipeline_test")
+    @GetMapping("/personalizedFeed")
     public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
             @RequestHeader(name = "Authorization", required = false) String header) {
 
@@ -87,6 +87,6 @@ public class ArticleController {
 
         String token = header.replace("Bearer ", "");
 
-        return ResponseEntity.ok(articleService.pipelineTest(token));
+        return ResponseEntity.ok(articleService.personalizedFeed(token));
     }
 }

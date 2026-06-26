@@ -74,32 +74,22 @@ public class ArticleServiceImpl implements ArticleService{
 	}
 
     @Override
-    public List<SummarizedArticleDto> pipelineTest(String token) {
+    public List<SummarizedArticleDto> personalizedFeed(String token) {
 
         Map<String, Float> preferences = userService.getUserPreferences(token);
-        System.out.println("User preferences: " + preferences);
 
         List<ArticleDto> articles = getAllArticles();
-
+        articles = buildBalancedFeedCandidates(articles, preferences, 15);
         List<SummarizedArticleDto> summarizedArticles = new ArrayList<>();
 
         int count = 0;
 
         for (ArticleDto article : articles) {
 
-            if (count >= 5) {
+            if (count >= 15) {
                 break;
             }
 
-            System.out.println("Checking article: " + article.getTitle());
-            System.out.println("Article categories: " + article.getCategories());
-
-            if (!matchesUserPreferences(article, preferences)) {
-                System.out.println("Skipped by preferences");
-                continue;
-            }
-
-            System.out.println("Matched preferences, trying scrape...");
 
             List<ArticleSource> sources = new ArrayList<>();
             sources.add(article.getSource());
@@ -130,7 +120,8 @@ public class ArticleServiceImpl implements ArticleService{
         return summarizedArticles;
     }
 
-    private boolean matchesUserPreferences(ArticleDto article, Map<String, Float> preferences) {
+    //checking according to user's preferences if the article has one of his preferred categories. if not - ignore article
+    /*private boolean matchesUserPreferences(ArticleDto article, Map<String, Float> preferences) {
 
         if (preferences == null || preferences.isEmpty()) {
             return true;
@@ -149,6 +140,91 @@ public class ArticleServiceImpl implements ArticleService{
         }
 
         return false;
-    }
+    }*/
 
+    private double calculatePreferenceScore(ArticleDto article, Map<String, Float> preferences) {
+
+        if (preferences == null || preferences.isEmpty()) {
+            return 1.0;
+        }
+
+        if (article.getCategories() == null || article.getCategories().isEmpty()) {
+            return 0.0;
+        }
+
+        double score = 0.0;
+
+        for (ArticleCategory category : article.getCategories()) {
+            Float preferenceValue = preferences.get(category.name());
+
+            if (preferenceValue != null) {
+                score += preferenceValue;
+            }
+        }
+
+        return score / article.getCategories().size();
+    }
+    private List<ArticleDto> buildBalancedFeedCandidates(
+            List<ArticleDto> articles,
+            Map<String, Float> preferences,
+            int limit
+    ) {
+        if (preferences == null || preferences.isEmpty()) {
+            return articles.stream()
+                    .limit(limit)
+                    .toList();
+        }
+
+        List<ArticleDto> result = new ArrayList<>();
+
+        Map<String, List<ArticleDto>> articlesByCategory = new java.util.HashMap<>();
+
+        for (ArticleDto article : articles) {
+            if (article.getCategories() == null || article.getCategories().isEmpty()) {
+                continue;
+            }
+
+            for (ArticleCategory category : article.getCategories()) {
+                Float weight = preferences.get(category.name());
+
+                if (weight != null && weight > 0) {
+                    articlesByCategory
+                            .computeIfAbsent(category.name(), k -> new ArrayList<>())
+                            .add(article);
+                }
+            }
+        }
+
+        double totalWeight = preferences.values().stream()
+                .filter(value -> value != null && value > 0)
+                .mapToDouble(Float::doubleValue)
+                .sum();
+
+        for (Map.Entry<String, Float> entry : preferences.entrySet()) {
+            String categoryName = entry.getKey();
+            Float weight = entry.getValue();
+
+            if (weight == null || weight <= 0) {
+                continue;
+            }
+
+            List<ArticleDto> categoryArticles =
+                    articlesByCategory.getOrDefault(categoryName, List.of());
+
+            int quota = Math.max(1, (int) Math.round((weight / totalWeight) * limit));
+
+            for (ArticleDto article : categoryArticles) {
+                if (result.size() >= limit || quota <= 0) {
+                    break;
+                }
+
+                if (!result.contains(article)) {
+                    result.add(article);
+                    quota--;
+                }
+            }
+        }
+
+        return result;
+    }
 }
