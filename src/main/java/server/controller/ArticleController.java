@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import server.DTO.ArticleDto.ArticleDto;
 import server.DTO.ArticleDto.ArticleMetadataDto;
 import server.DTO.ArticleDto.SummarizedArticleDto;
-import server.helper.ArticleSource;
 import server.helper.OpenAiService;
 import server.helper.RssFetcher;
 import server.services.ArticleService;
@@ -44,13 +43,9 @@ public class ArticleController {
 	}
 
     @GetMapping(path= "rawArticle")
-    public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId, @RequestHeader(name = "Authorization", required = false) String header)
-    {
-		 if (header == null || header.isBlank()) {
-            throw new server.exceptions.BadRequestException("Missing Authorization header");
-        }
-
-        String token = header.replace("Bearer ", "");
+    public ArticleDto getRawArticleData(
+            @RequestParam("articleId") String articleId,
+            @RequestAttribute("firebaseUid") String uid) {
         return articleService.getRawArticleData(articleId);
     }
 	@GetMapping(path="searchByText")
@@ -82,14 +77,8 @@ public class ArticleController {
     }
     @GetMapping("/personalizedFeed")
     public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
-        @RequestHeader(name = "Authorization", required = false) String header) {
-
-        if (header == null || header.isBlank()) {
-            throw new server.exceptions.BadRequestException("Missing Authorization header");
-        }
-
-        String token = header.replace("Bearer ", "");
+            @RequestAttribute("firebaseUid") String uid) {
 		return null;
-        //return ResponseEntity.ok(articleService.personalizedFeed(token));
+        //return ResponseEntity.ok(articleService.personalizedFeed(uid));
     }
 }

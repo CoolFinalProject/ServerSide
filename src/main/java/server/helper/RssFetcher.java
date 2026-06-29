@@ -34,7 +34,7 @@ public class RssFetcher {
 
                 String description = null;
                 if (entry.getDescription() != null) {
-                    description = entry.getDescription().getValue();
+                    description = HtmlTextUtil.toPlainText(entry.getDescription().getValue());
                 }
 
                 articleMetadata[i] = new ArticleMetadataDto(source, description, null);
