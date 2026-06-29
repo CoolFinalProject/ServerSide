@@ -3,10 +3,12 @@ package server.controller;
 import java.util.Map;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,8 +78,12 @@ public class UserController {
             path = "/preferences",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Map<String, Float> getUserPreferences(@RequestHeader(name="Authorization",required=false) String header) {
-		String token = header.replace("Bearer ", "");
-        return userService.getUserPreferences(token);
+    public Map<String, Float> getUserPreferences(@RequestAttribute("firebaseUid") String uid) {
+        return userService.getUserPreferences(uid);
+    }
+
+    @DeleteMapping(path = "/deliveredArticles")
+    public long clearDeliveredArticles(@RequestAttribute("firebaseUid") String uid) {
+        return userService.clearDeliveredArticles(uid);
     }
 }

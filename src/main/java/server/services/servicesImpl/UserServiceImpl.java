@@ -16,16 +16,19 @@ import server.DTO.UserDto.UserUpdateDto;
 import server.convertions.UserConvertion;
 import server.entities.UserEntities.UserEntity;
 import server.enums.UserRole;
-import server.repositories.UserRepository;
+import server.repositories.mongo.UserArticleDeliveredRepository;
+import server.repositories.mongo.UserRepository;
 import server.services.UserService;
 @Service
 public class UserServiceImpl implements UserService{
 
 	UserRepository userRep;
+	UserArticleDeliveredRepository deliveredRepository;
 
-	public UserServiceImpl(UserRepository userRep)
+	public UserServiceImpl(UserRepository userRep, UserArticleDeliveredRepository deliveredRepository)
 	{
 		this.userRep=userRep;
+		this.deliveredRepository=deliveredRepository;
 	}
 
 	private UserEntity getUserEntityFromToken(String token)
@@ -61,7 +64,10 @@ public class UserServiceImpl implements UserService{
 	{
 		return UserConvertion.userEntityToDto(getUserEntityFromToken(idToken));
 	}
-
+	public UserDto getUserfromUid(String uid)
+	{
+		return UserConvertion.userEntityToDto(userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server")));
+	}
 	@Override
 	public UserDto updateUserData(String id, UserUpdateDto userToUpdate) 
 	{
@@ -100,10 +106,17 @@ public class UserServiceImpl implements UserService{
         return UserConvertion.userEntityToDto(savedEntity);
     }
     @Override
-    public Map<String, Float> getUserPreferences(String token) {
-		UserDto user = getUserFromToken(token);
+    public Map<String, Float> getUserPreferences(String uid) {
+		UserDto user = getUserfromUid(uid);
         return user.getGenrePreferences();
     }
+
+    @Override
+    public long clearDeliveredArticles(String uid) {
+        getUserfromUid(uid);
+        return deliveredRepository.deleteByUserId(uid);
+    }
+
 	@Override
 	public void deleteAllUsers() {
 		userRep.deleteAll();

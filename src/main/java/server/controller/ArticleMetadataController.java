@@ -1,9 +1,14 @@
 package server.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import server.DTO.ArticleDto.ArticleMetadataDto;
@@ -14,16 +19,21 @@ import server.services.ArticleMetadataService;
 public class ArticleMetadataController {
 
     ArticleMetadataService metadataService;
-    public ArticleMetadataController(ArticleMetadataService metadataService)
-    {
-        this.metadataService=metadataService;
+
+    public ArticleMetadataController(ArticleMetadataService metadataService) {
+        this.metadataService = metadataService;
     }
 
     @GetMapping(path= "getAll")
-    public Page<ArticleMetadataDto> getAll(Pageable pageable)
-    {
+    public Page<ArticleMetadataDto> getAll(Pageable pageable) {
         return metadataService.getAllArticleMetadata(pageable);
     }
 
-    
+    @GetMapping(path = "personalizedFeed")
+    public ResponseEntity<List<ArticleMetadataDto>> getPersonalizedFeed(
+            @RequestAttribute("firebaseUid") String uid,
+            @RequestParam(defaultValue = "10",name = "size") int size) {
+        return ResponseEntity.ok(metadataService.getPersonalizedFeed(uid, size));
+    }
+
 }

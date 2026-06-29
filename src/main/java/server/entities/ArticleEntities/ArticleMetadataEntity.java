@@ -3,10 +3,11 @@ package server.entities.ArticleEntities;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import server.enums.ArticleCategory;
 import server.helper.ArticleSource;
-
+@Document(collection = "articleMetadata")
 public class ArticleMetadataEntity {
     @Id
     private String articleId; 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import server.DTO.ArticleDto.ArticleDto;
 import server.convertions.ArticleConvertion;
 import server.entities.ArticleEntities.ArticleEntity;
-import server.repositories.ArticleRepository;
+import server.repositories.redis.ArticleRedisRepository;
 import server.services.ArticleService;
 
 @Service
@@ -18,7 +18,7 @@ public class ArticleServiceImpl implements ArticleService{
 
 	
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticleRedisRepository articleRepository;
 
     @Override
     public ArticleDto getRawArticleData(String articleId) {

@@ -12,7 +12,9 @@ public interface UserService {
 	public UserDto getUserFromToken(String token);
 	public UserDto updateUserData(String id,UserUpdateDto userToUpdate);
     public UserDto updateUserPreferences(String token, Map<String, Float> genrePreferences);
-    public Map<String, Float> getUserPreferences(String token);
+    public Map<String, Float> getUserPreferences(String uid);
+
+    long clearDeliveredArticles(String uid);
 
 /////
 /// 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import server.entities.ArticleEntities.ArticleMetadataEntity;
 import server.helper.RssFetcher;
-import server.repositories.ArticleMetadataRepository;
+import server.repositories.mongo.ArticleMetadataRepository;
 import server.services.RssService;
 import server.enums.ArticleCategory;
 import server.helper.OpenAiService;
