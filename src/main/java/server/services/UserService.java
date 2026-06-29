@@ -7,11 +7,11 @@ import server.DTO.UserDto.UserDto;
 import server.DTO.UserDto.UserUpdateDto;
 
 public interface UserService {
-	public UserDto signUpUser(String token);
+	public UserDto signUpUser(String uid);
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto);
-	public UserDto getUserFromToken(String token);
+	public UserDto getUserByUid(String uid);
 	public UserDto updateUserData(String id,UserUpdateDto userToUpdate);
-    public UserDto updateUserPreferences(String token, Map<String, Float> genrePreferences);
+    public UserDto updateUserPreferences(String uid, Map<String, Float> genrePreferences);
     public Map<String, Float> getUserPreferences(String uid);
 
     long clearDeliveredArticles(String uid);

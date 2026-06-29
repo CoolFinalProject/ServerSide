@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,13 +28,9 @@ public class UserController {
 		this.userService=userService;
 	}
 
-
-
 	@PostMapping(path = "/newUser",produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto signUpUser(@RequestHeader(name="Authorization",required=false) String header)
-	{
-		String token = header.replace("Bearer ", "");
-		return userService.signUpUser(token);
+	public UserDto signUpUser(@RequestAttribute("firebaseUid") String uid) {
+		return userService.signUpUser(uid);
 	}
 
 	@PostMapping(path = "/auth/byName",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,36 +39,30 @@ public class UserController {
 	{
 		return userService.authenticateByName(userAuthDto);
 	}
+
 	@PutMapping(path = "updateUser/{id}")
 	@Deprecated
 	public UserDto updateUserData(@PathVariable("id") String id, @RequestBody UserUpdateDto entity) {
 		return userService.updateUserData(id, entity);
 	}
+
     @PutMapping(
             path = "/preferences",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public UserDto updateUserPreferences(
-            @RequestHeader(name="Authorization",required=false) String header,
+            @RequestAttribute("firebaseUid") String uid,
             @RequestBody Map<String, Float> genrePreferences
     ) {
-		String token = header.replace("Bearer ", "");
-        return userService.updateUserPreferences(token, genrePreferences);
+        return userService.updateUserPreferences(uid, genrePreferences);
     }
-///
-///-------------NOTICE!!!!!!!!!!!!!!!!!-----------------
-/// authentication with tokens should not be implemented this way!
-///	tokens should be send in the header -- will be implemented later on when authentication will
-/// get reworked and done properly in the future
-///
-///
+
 	@GetMapping(path="/authByToken",produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto authenticateByToken(@RequestHeader(name="Authorization",required=false) String header)
-	{
-		String token = header.replace("Bearer ", "");
-		return userService.getUserFromToken(token);
+	public UserDto authenticateByToken(@RequestAttribute("firebaseUid") String uid) {
+		return userService.getUserByUid(uid);
 	}
+
     @GetMapping(
             path = "/preferences",
             produces = MediaType.APPLICATION_JSON_VALUE

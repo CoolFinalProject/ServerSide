@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.UserRecord;
 
 import server.DTO.UserDto.UserAuthenticateDto;
 import server.DTO.UserDto.UserDto;
@@ -31,24 +31,19 @@ public class UserServiceImpl implements UserService{
 		this.deliveredRepository=deliveredRepository;
 	}
 
-	private UserEntity getUserEntityFromToken(String token)
-	{
-		FirebaseToken decodedToken=getDecodedToken(token);
-		// we normally won't get NotFound exception here as all users in firebase should be in database
-		return userRep.findById(decodedToken.getUid()).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server"));
-
-	}
-	private FirebaseToken getDecodedToken(String token)
-	{
-		FirebaseToken decodedToken;
-		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-			return decodedToken;
-		} catch (FirebaseAuthException e) {			
-			throw new server.exceptions.BadRequestException("Invalid token "+token);
-		}
+	private UserEntity getUserEntityByUid(String uid) {
+		return userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server"));
 	}
 
+	@Override
+	public UserDto getUserByUid(String uid) {
+		return UserConvertion.userEntityToDto(getUserEntityByUid(uid));
+	}
+
+	public UserDto getUserfromUid(String uid)
+	{
+		return getUserByUid(uid);
+	}
 	@Override
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto) 
 	{	
@@ -59,15 +54,6 @@ public class UserServiceImpl implements UserService{
 			return UserConvertion.userEntityToDto(entity.get());
 	}
 
-	@Override
-	public UserDto getUserFromToken(String idToken) 
-	{
-		return UserConvertion.userEntityToDto(getUserEntityFromToken(idToken));
-	}
-	public UserDto getUserfromUid(String uid)
-	{
-		return UserConvertion.userEntityToDto(userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server")));
-	}
 	@Override
 	public UserDto updateUserData(String id, UserUpdateDto userToUpdate) 
 	{
@@ -84,22 +70,25 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto signUpUser(String token) {
-		
-		FirebaseToken decodedToken=getDecodedToken(token);
-		UserDto user=new UserDto();
-		user.setUserName(decodedToken.getName());
-		user.setPassWord("");
-		user.setUserRole(UserRole.END_USER);
-		user.setUserId(decodedToken.getUid());  
-		user.setCreationTime(new Date());
-		// by default active = true
-		userRep.save(UserConvertion.userDtoToEntity(user));
-		return user;
+	public UserDto signUpUser(String uid) {
+		try {
+			UserRecord firebaseUser = FirebaseAuth.getInstance().getUser(uid);
+			UserDto user = new UserDto();
+			user.setUserName(firebaseUser.getDisplayName());
+			user.setPassWord("");
+			user.setUserRole(UserRole.END_USER);
+			user.setUserId(uid);
+			user.setCreationTime(new Date());
+			userRep.save(UserConvertion.userDtoToEntity(user));
+			return user;
+		} catch (FirebaseAuthException e) {
+			throw new server.exceptions.BadRequestException("Invalid uid " + uid);
+		}
 	}
+
     @Override
-    public UserDto updateUserPreferences(String token, Map<String, Float> genrePreferences) {
-        UserEntity entity = getUserEntityFromToken(token);
+    public UserDto updateUserPreferences(String uid, Map<String, Float> genrePreferences) {
+        UserEntity entity = getUserEntityByUid(uid);
         entity.setGenrePreferences(genrePreferences);
         UserEntity savedEntity = userRep.save(entity);
 
@@ -107,8 +96,7 @@ public class UserServiceImpl implements UserService{
     }
     @Override
     public Map<String, Float> getUserPreferences(String uid) {
-		UserDto user = getUserfromUid(uid);
-        return user.getGenrePreferences();
+		return getUserByUid(uid).getGenrePreferences();
     }
 
     @Override
