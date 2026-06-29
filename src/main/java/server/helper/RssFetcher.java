@@ -9,9 +9,11 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
+import server.DTO.ArticleDto.ArticleMetadataDto;
+
 public class RssFetcher {
 
-    public ArticleSource[] fetchAndPrint(String feedUrl) {
+    public ArticleMetadataDto[] fetchAndPrint(String feedUrl) {
         try {
             URL url = new URL(feedUrl);
             XmlReader reader = new XmlReader(url);
@@ -20,19 +22,24 @@ public class RssFetcher {
 
 
             List<SyndEntry> entries = feed.getEntries();
-            ArticleSource[] articleSources = new ArticleSource[entries.size()];
+            ArticleMetadataDto[] articleMetadata = new ArticleMetadataDto[entries.size()];
             for (int i = 0; i < entries.size(); i++) {
-                articleSources[i] = new ArticleSource();
-                articleSources[i].setTitle(entries.get(i).getTitle());
-                if (entries.get(i).getDescription() != null) {
-                    articleSources[i].setDescription(entries.get(i).getDescription().getValue());
+                SyndEntry entry = entries.get(i);
+                ArticleSource source = new ArticleSource();
+                source.setTitle(entry.getTitle());
+                source.setWebSource(entry.getLink());
+                source.setAuthor(entry.getAuthor());
+                source.setPublishDate(entry.getPublishedDate());
+                source.setScrapeDate(new Date());
+
+                String description = null;
+                if (entry.getDescription() != null) {
+                    description = entry.getDescription().getValue();
                 }
-                articleSources[i].setWebSource(entries.get(i).getLink());
-                articleSources[i].setAuthor(entries.get(i).getAuthor());
-                articleSources[i].setPublishDate(entries.get(i).getPublishedDate());
-                articleSources[i].setScrapeDate(new Date());
+
+                articleMetadata[i] = new ArticleMetadataDto(source, description, null);
             }
-            return articleSources;
+            return articleMetadata;
         } catch (Exception e) {
             e.printStackTrace();
         }

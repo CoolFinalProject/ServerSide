@@ -7,8 +7,6 @@ public class ArticleSource {
 	private Date publishDate;
 	private Date scrapeDate;
     private String title;
-    private String link;
-    private String description;
 
 	public ArticleSource() {};
 	
@@ -31,8 +29,6 @@ public class ArticleSource {
 	public void setWebSource(String webSource) {
 		this.webSource = webSource;
 	}
-    public String getLink() { return link; }
-    public void setLink(String link) { this.link = link; }
 	public String getAuthor() {
 		return author;
 	}
@@ -51,15 +47,13 @@ public class ArticleSource {
 	public void setScrapeDate(Date scrapeDate) {
 		this.scrapeDate = scrapeDate;
 	}
-    public String getDescription() { return description;}
-    public void setDescription(String description) { this.description = description;}
-
+  
     @Override
     public String toString() {
         return "ArticleSource [title=" + title
                 + ", webSource=" + webSource
                 + ", author=" + author
                 + ", publishDate=" + publishDate
-                + ", scrapeDate=" + scrapeDate + ", description=" + description  + "]";
+                + ", scrapeDate=" + scrapeDate + "]";
     }
 }

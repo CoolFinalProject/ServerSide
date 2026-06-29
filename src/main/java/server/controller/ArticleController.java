@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestHeader;
+
 import server.DTO.ArticleDto.ArticleDto;
+import server.DTO.ArticleDto.ArticleMetadataDto;
 import server.DTO.ArticleDto.SummarizedArticleDto;
 import server.helper.ArticleSource;
 import server.helper.OpenAiService;
@@ -40,14 +42,15 @@ public class ArticleController {
 	{
 		return articleService.getAllArticles();
 	}
-	@GetMapping(path = "sample")
-	public void createSampleArticle()
-	{
-		articleService.createSample();
-	}
+
     @GetMapping(path= "rawArticle")
-    public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId)
+    public ArticleDto getRawArticleData(@RequestParam("articleId") String articleId, @RequestHeader(name = "Authorization", required = false) String header)
     {
+		 if (header == null || header.isBlank()) {
+            throw new server.exceptions.BadRequestException("Missing Authorization header");
+        }
+
+        String token = header.replace("Bearer ", "");
         return articleService.getRawArticleData(articleId);
     }
 	@GetMapping(path="searchByText")
@@ -66,7 +69,7 @@ public class ArticleController {
 	public List<SummarizedArticleDto> getArticleSummarised()
     {
 		RssFetcher rssFetcher = new RssFetcher();
-        List<ArticleSource> sources= new ArrayList<ArticleSource>(Arrays.asList(rssFetcher.fetchAndPrint("https://www.ynet.co.il/Integration/StoryRss2.xml")[0]) );
+        List<ArticleMetadataDto> sources= new ArrayList<ArticleMetadataDto>(Arrays.asList(rssFetcher.fetchAndPrint("https://www.ynet.co.il/Integration/StoryRss2.xml")[0]) );
 		List<ArticleDto> articles = scrapeService.scrapeArticles(sources);
 		List<SummarizedArticleDto> sumArticles= new ArrayList<>();
 		for (ArticleDto article : articles) 
@@ -79,14 +82,14 @@ public class ArticleController {
     }
     @GetMapping("/personalizedFeed")
     public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
-            @RequestHeader(name = "Authorization", required = false) String header) {
+        @RequestHeader(name = "Authorization", required = false) String header) {
 
         if (header == null || header.isBlank()) {
             throw new server.exceptions.BadRequestException("Missing Authorization header");
         }
 
         String token = header.replace("Bearer ", "");
-
-        return ResponseEntity.ok(articleService.personalizedFeed(token));
+		return null;
+        //return ResponseEntity.ok(articleService.personalizedFeed(token));
     }
 }

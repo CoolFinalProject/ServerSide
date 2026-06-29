@@ -1,7 +1,6 @@
 package server.services.servicesImpl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +11,8 @@ import org.springframework.stereotype.Service;
 import server.DTO.ArticleDto.ArticleDto;
 import server.convertions.ArticleConvertion;
 import server.entities.ArticleEntities.ArticleEntity;
-import server.enums.ArticleCategory;
-import server.helper.ArticleSource;
 import server.repositories.ArticleRepository;
 import server.services.ArticleService;
-import server.helper.OpenAiService;
-import server.services.ScrapeService;
-import server.DTO.ArticleDto.SummarizedArticleDto;
-import server.services.UserService;
 
 @Service
 public class ArticleServiceImpl implements ArticleService{
@@ -27,12 +20,7 @@ public class ArticleServiceImpl implements ArticleService{
 	
     @Autowired
     private ArticleRepository articleRepository;
-    @Autowired
-    private OpenAiService openAiService;
-    @Autowired
-    private ScrapeService scrapeService;
-    @Autowired
-    private UserService userService;
+
     @Override
     public ArticleDto getRawArticleData(String articleId) {
         ArticleEntity entity = articleRepository.findById(articleId)
@@ -60,19 +48,12 @@ public class ArticleServiceImpl implements ArticleService{
     	return articleDtos;
 	}
 
-	@Override
-	public void createSample() {
-		ArticleDto sample = new ArticleDto("IamCoolArticle", new ArticleSource("Ynet", "Me", new Date(), new Date()), "I am a title", "I am text", null, null);
-		ArticleEntity entity = ArticleConvertion.dtoToEntity(sample);
-		// default ttl is set in ArticleEntity
-        articleRepository.save(entity);
-	}
 
 	@Override
 	public void deleteAllArticles() {
 		articleRepository.deleteAll();
 	}
-
+/* 
     @Override
     public List<SummarizedArticleDto> personalizedFeed(String token) {
 
@@ -84,17 +65,20 @@ public class ArticleServiceImpl implements ArticleService{
 
         int count = 0;
 
+        System.out.println("Went through pipeline");
         for (ArticleDto article : articles) {
 
-            if (count >= 15) {
+                    System.out.println("Article "+count);
+
+            if (count >= 5) {
                 break;
             }
 
 
-            List<ArticleSource> sources = new ArrayList<>();
-            sources.add(article.getSource());
+            List<ArticleMetadataDto> metadatas = new ArrayList<>();
+            metadatas.add((ArticleMetadataDto)article);
 
-            List<ArticleDto> scrapedArticles = scrapeService.scrapeArticles(sources);
+            List<ArticleDto> scrapedArticles = scrapeService.scrapeArticles(metadatas);
 
             if (scrapedArticles.isEmpty()) {
                 System.out.println("Scrape returned empty");
@@ -119,28 +103,6 @@ public class ArticleServiceImpl implements ArticleService{
 
         return summarizedArticles;
     }
-
-    //checking according to user's preferences if the article has one of his preferred categories. if not - ignore article
-    /*private boolean matchesUserPreferences(ArticleDto article, Map<String, Float> preferences) {
-
-        if (preferences == null || preferences.isEmpty()) {
-            return true;
-        }
-
-        if (article.getCategories() == null || article.getCategories().isEmpty()) {
-            return false;
-        }
-
-        for (ArticleCategory category : article.getCategories()) {
-            Float preferenceValue = preferences.get(category.name());
-
-            if (preferenceValue != null && preferenceValue > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }*/
 
     private double calculatePreferenceScore(ArticleDto article, Map<String, Float> preferences) {
 
@@ -227,4 +189,5 @@ public class ArticleServiceImpl implements ArticleService{
 
         return result;
     }
+        */
 }

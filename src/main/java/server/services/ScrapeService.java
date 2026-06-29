@@ -3,9 +3,9 @@ package server.services;
 import java.util.List;
 
 import server.DTO.ArticleDto.ArticleDto;
-import server.helper.ArticleSource;
+import server.DTO.ArticleDto.ArticleMetadataDto;
 
 public interface ScrapeService {
 
-    public List<ArticleDto> scrapeArticles(List<ArticleSource> sources) ;
+    public List<ArticleDto> scrapeArticles(List<ArticleMetadataDto> sources) ;
 }

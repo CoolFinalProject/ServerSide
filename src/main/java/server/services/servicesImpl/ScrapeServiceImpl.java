@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import server.DTO.ArticleDto.ArticleDto;
-import server.helper.ArticleSource;
+import server.DTO.ArticleDto.ArticleMetadataDto;
 import server.services.ScrapeService;
 
 @Service
@@ -17,11 +17,11 @@ public class ScrapeServiceImpl implements  ScrapeService{
 
 
     @Override
-    public List<ArticleDto> scrapeArticles(List<ArticleSource> sources) {
+    public List<ArticleDto> scrapeArticles(List<ArticleMetadataDto> sources) {
         List<ArticleDto> scrapedArticles = new ArrayList<>();
 
-        for (ArticleSource source : sources) {
-            String targetUrl = source.getWebSource(); 
+        for (ArticleMetadataDto metadata : sources) {
+            String targetUrl = metadata.getSource().getWebSource(); 
             
             if (targetUrl == null || targetUrl.trim().isEmpty()) {
                 continue; 
@@ -44,20 +44,14 @@ public class ScrapeServiceImpl implements  ScrapeService{
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        rawText.append(line).append("\n"); // Preserve line breaks
+                        rawText.append(line).append('\n'); // Preserve line breaks
                     }
                 }
 
                 int exitCode = process.waitFor();
                 if (exitCode == 0) {
-                    // Manually build the DTO since we only have the text
-                    ArticleDto dto = new ArticleDto();
-                    dto.setArticleId(UUID.randomUUID().toString()); // Generate an ID
-                    dto.setSource(source);
-                    dto.setText(rawText.toString().trim()); 
-                    
-                    // Title and details remain null or can be populated elsewhere
-                    
+                    ArticleDto dto = new ArticleDto(metadata, rawText.toString().trim() ,null);
+                                     
                     scrapedArticles.add(dto);
                 } else {
                     System.err.println("Scraping failed for URL: " + targetUrl);

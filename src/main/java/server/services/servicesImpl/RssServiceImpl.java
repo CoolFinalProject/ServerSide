@@ -3,24 +3,24 @@ package server.services.servicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import server.entities.ArticleEntities.ArticleEntity;
-import server.helper.ArticleSource;
+
+import server.entities.ArticleEntities.ArticleMetadataEntity;
 import server.helper.RssFetcher;
-import server.repositories.ArticleRepository;
+import server.repositories.ArticleMetadataRepository;
 import server.services.RssService;
 import server.enums.ArticleCategory;
 import server.helper.OpenAiService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import server.DTO.ArticleDto.ArticleMetadataDto;
+import server.convertions.ArticleMetadataConvertion;
 
 @Service
 public class RssServiceImpl implements RssService {
 
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticleMetadataRepository articleMetadataRepository;
 
     @Autowired
     private OpenAiService openAiService;
@@ -38,7 +38,7 @@ public class RssServiceImpl implements RssService {
 
         for (String rssUrl : rssUrls) {
             try {
-                ArticleSource[] articles = rssFetcher.fetchAndPrint(rssUrl);
+                ArticleMetadataDto[] articles = rssFetcher.fetchAndPrint(rssUrl);
                 SaveResult result = saveArticles(articles);
 
                 totalSaved += result.saved();
@@ -57,10 +57,10 @@ public class RssServiceImpl implements RssService {
         System.out.println("RSS fetch finished");
         System.out.println("Total saved new articles: " + totalSaved);
         System.out.println("Total skipped articles: " + totalSkipped);
-        System.out.println("Articles in repository: " + articleRepository.count());
+        System.out.println("Articles in repository: " + articleMetadataRepository.count());
     }
 
-    private SaveResult saveArticles(ArticleSource[] articles) {
+    private SaveResult saveArticles(ArticleMetadataDto[] articles) {
 
         int saved = 0;
         int skipped = 0;
@@ -69,37 +69,31 @@ public class RssServiceImpl implements RssService {
             return new SaveResult(saved, skipped);
         }
 
-        for (ArticleSource article : articles) {
+        for (ArticleMetadataDto article : articles) {
 
             if (article == null) {
                 skipped++;
                 continue;
             }
 
-            String articleUrl = article.getWebSource();
+            String articleUrl = article.getSource().getWebSource();
 
             if (articleUrl == null || articleUrl.isBlank()) {
                 skipped++;
                 continue;
             }
 
-            if (articleRepository.existsById(articleUrl)) {
+            if (articleMetadataRepository.existsById(articleUrl)) {
                 skipped++;
                 continue;
             }
 
-            ArticleEntity entity = new ArticleEntity();
-
-            entity.setArticleId(articleUrl);
-            entity.setSource(article);
-            entity.setTitle(article.getTitle());
-            entity.setText(null);
-            entity.setDetails(null);
+            ArticleMetadataEntity entity = ArticleMetadataConvertion.dtoToEntity(article);
             try {
                 List<ArticleCategory> categories = openAiService.classifyCategories(
-                        article.getTitle(),
+                        article.getSource().getTitle(),
                         article.getDescription(),
-                        article.getWebSource()
+                        article.getSource().getWebSource()
                 );
 
                 if (categories == null || categories.isEmpty()) {
@@ -111,44 +105,15 @@ public class RssServiceImpl implements RssService {
             } catch (Exception e) {
                 entity.setCategories(List.of(ArticleCategory.GENERAL));
             }
-            articleRepository.save(entity);
+            articleMetadataRepository.insert(entity); 
+            
+            
+
             saved++;
         }
 
         return new SaveResult(saved, skipped);
     }
 
-    @Override
-    public void removeDuplicateArticles() {
-        Iterable<ArticleEntity> allArticles = articleRepository.findAll();
-        Map<String, String> seenUrls = new HashMap<>();
-        List<String> duplicateIds = new ArrayList<>();
-
-        for (ArticleEntity entity : allArticles) {
-
-            if (entity == null || entity.getSource() == null) {
-                continue;
-            }
-
-            String url = entity.getSource().getWebSource();
-
-            if (url == null || url.isBlank()) {
-                continue;
-            }
-
-            if (seenUrls.containsKey(url)) {
-                duplicateIds.add(entity.getArticleId());
-            } else {
-                seenUrls.put(url, entity.getArticleId());
-            }
-        }
-
-        articleRepository.deleteAllById(duplicateIds);
-
-        System.out.println("Duplicate cleanup finished");
-        System.out.println("Removed duplicate articles: " + duplicateIds.size());
-    }
-
-    private record SaveResult(int saved, int skipped) {
-    }
+    private record SaveResult(int saved, int skipped) {}
 }
