@@ -54,6 +54,13 @@ public class ArticleController {
 		return articleService.searchArticlesByText(text);
 	}
 
+	@GetMapping(path="summariseForUser")
+	public SummarizedArticleDto summariseForUser(@RequestAttribute("firebaseUid") String uid, @RequestParam("articleId") String articleId)
+	{
+
+		return articleService.getSummarizedArticleForUser(uid, articleId);
+
+	} 
 	@GetMapping(path= "getArticlesForUser/{id}")
 	public List<ArticleDto> getArticlesForUser(@PathVariable("id") String id)
 	{

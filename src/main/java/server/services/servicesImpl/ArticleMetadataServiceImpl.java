@@ -56,6 +56,11 @@ public class ArticleMetadataServiceImpl implements ArticleMetadataService{
         Page<ArticleMetadataEntity> page = metadataRepository.findAll(pageable);
         return page.map(entity -> ArticleMetadataConvertion.entityToDto(entity));
     }
+        @Override
+    public ArticleMetadataDto getMetadataById(String articleId) {
+        
+        return ArticleMetadataConvertion.entityToDto(metadataRepository.findById(articleId).orElseThrow(()-> new server.exceptions.NotFoundException(articleId+" Not Found")));
+    }
     @Override
     public long clearDeliveredArticles(String uid) {
         userService.getUserByUid(uid);
@@ -199,5 +204,6 @@ public class ArticleMetadataServiceImpl implements ArticleMetadataService{
         List<UserArticleDeliveredEntity> oldest = deliveredRepository.findByUserIdOrderByDeliveredAtAsc(userId, page);
         deliveredRepository.deleteAll(oldest);
     }
+
 
 }

@@ -8,4 +8,6 @@ import server.DTO.ArticleDto.ArticleMetadataDto;
 public interface ScrapeService {
 
     public List<ArticleDto> scrapeArticles(List<ArticleMetadataDto> sources) ;
+    public ArticleDto scrapeArticle(ArticleMetadataDto source) ;
+
 }

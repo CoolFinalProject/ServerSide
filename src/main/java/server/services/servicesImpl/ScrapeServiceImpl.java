@@ -14,56 +14,70 @@ import server.services.ScrapeService;
 @Service
 public class ScrapeServiceImpl implements  ScrapeService{
 
-
+/// IMPORTANT !! -- Scrape Service does NOT check cache or saves it it only scrapes article and return it and thats it!, to check for cache use ArticleService/getRawArticle
     @Override
     public List<ArticleDto> scrapeArticles(List<ArticleMetadataDto> sources) {
         List<ArticleDto> scrapedArticles = new ArrayList<>();
 
         for (ArticleMetadataDto metadata : sources) {
-            String targetUrl = metadata.getSource().getWebSource(); 
-            
+            String targetUrl = metadata.getSource().getWebSource();
+
             if (targetUrl == null || targetUrl.trim().isEmpty()) {
-                continue; 
+                continue;
             }
 
             try {
-                System.out.println("URL to scrape: " + targetUrl);
-                System.out.println("Java working dir: " + System.getProperty("user.dir"));
-                ProcessBuilder processBuilder = new ProcessBuilder(
-                        "python", 
-                        "src/main/python/scrapingArticle/scrapeNews.py", 
-                        targetUrl
-                );
-                
-                processBuilder.redirectErrorStream(true); 
-                Process process = processBuilder.start();
-
-                // Capture the raw text output
-                StringBuilder rawText = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        rawText.append(line).append('\n'); // Preserve line breaks
-                    }
-                }
-
-                int exitCode = process.waitFor();
-                if (exitCode == 0) {
-                    ArticleDto dto = new ArticleDto(metadata, rawText.toString().trim() ,null);
-                                     
-                    scrapedArticles.add(dto);
-                } else {
-                    System.err.println("Scraping failed for URL: " + targetUrl);
-                    System.err.println("Script output/error: " + rawText.toString());
-                }
-
+                scrapedArticles.add(scrapeArticle(metadata));
             } catch (Exception e) {
-                System.err.println("Exception occurred while scraping: " + targetUrl);
-                e.printStackTrace();
             }
         }
 
         return scrapedArticles;
+    }
+
+    @Override
+    public ArticleDto scrapeArticle(ArticleMetadataDto metadata) {
+        String targetUrl = metadata.getSource().getWebSource();
+
+        if (targetUrl == null || targetUrl.trim().isEmpty()) {
+            throw new server.exceptions.NotFoundException("Url is empty");
+        }
+
+        try {
+            System.out.println("URL to scrape: " + targetUrl);
+            System.out.println("Java working dir: " + System.getProperty("user.dir"));
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    "python",
+                    "src/main/python/scrapingArticle/scrapeNews.py",
+                    targetUrl
+            );
+
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            StringBuilder rawText = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    rawText.append(line).append('\n');
+                }
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                return new ArticleDto(metadata, rawText.toString().trim(), null);
+            }
+
+            System.err.println("Scraping failed for URL: " + targetUrl);
+            System.err.println("Script output/error: " + rawText.toString());
+            throw new server.exceptions.BadRequestException("Scraping failed for URL: " + targetUrl);
+        } catch (server.exceptions.BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Exception occurred while scraping: " + targetUrl);
+            e.printStackTrace();
+            throw new server.exceptions.BadRequestException("Exception occurred while scraping: " + targetUrl, e);
+        }
     }
 
 }

@@ -8,10 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import server.DTO.ArticleDto.ArticleDto;
+import server.DTO.ArticleDto.ArticleMetadataDto;
+import server.DTO.ArticleDto.SummarizedArticleDto;
 import server.convertions.ArticleConvertion;
 import server.entities.ArticleEntities.ArticleEntity;
+import server.helper.OpenAiService;
 import server.repositories.redis.ArticleRedisRepository;
+import server.services.ArticleMetadataService;
 import server.services.ArticleService;
+import server.services.ScrapeService;
+import server.services.UserService;
 
 @Service
 public class ArticleServiceImpl implements ArticleService{
@@ -20,12 +26,48 @@ public class ArticleServiceImpl implements ArticleService{
     @Autowired
     private ArticleRedisRepository articleRepository;
 
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ArticleMetadataService metadataService;
+    @Autowired 
+    private ScrapeService scrapeService;
+    @Autowired
+    private OpenAiService openAiService;
+    
+
+
+    /// Checks Cache first and if not scrapes the Article
     @Override
     public ArticleDto getRawArticleData(String articleId) {
-        ArticleEntity entity = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("Article not found: " + articleId));
+        ArticleDto dto = articleRepository.findById(articleId).map(ArticleConvertion::entityToDto)
+        .orElseGet(()->
+        {
+            // This code happens if article is not in cache
+            System.out.println("Article "+articleId +" Not in cache(miss)");
+            ArticleMetadataDto metadata = metadataService.getMetadataById(articleId);
+            ArticleDto scrapedDto = scrapeService.scrapeArticle(metadata);
+            articleRepository.save(ArticleConvertion.dtoToEntity(scrapedDto));
+            return scrapedDto;
+        });
+            
+        return dto;
+    }
 
-        return ArticleConvertion.entityToDto(entity);
+    @Override
+    public SummarizedArticleDto getSummarizedArticleForUser(String uid, String articleId) {
+        userService.getUserByUid(uid);
+
+        ArticleDto articleDto = getRawArticleData(articleId);
+        String text = articleDto.getText();
+        if (text == null || text.isBlank()) {
+            throw new server.exceptions.BadRequestException("Article text is empty");
+        }
+
+        SummarizedArticleDto summarizedArticle = new SummarizedArticleDto(articleDto);
+        summarizedArticle.setForUserId(uid);
+        summarizedArticle.setSummarizedText(openAiService.summarizeNeutral(text));
+        return summarizedArticle;
     }
 
 	@Override
@@ -189,4 +231,5 @@ public class ArticleServiceImpl implements ArticleService{
         return result;
     }
         */
+
 }

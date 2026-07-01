@@ -11,8 +11,8 @@ import server.DTO.ArticleDto.ArticleMetadataDto;
 public interface ArticleMetadataService {
 
     public Page<ArticleMetadataDto> getAllArticleMetadata(Pageable pageable);
-
     List<ArticleMetadataDto> getPersonalizedFeed(String userId, int size);
+    public ArticleMetadataDto getMetadataById(String articleId);
     long clearDeliveredArticles(String uid);
 
 }

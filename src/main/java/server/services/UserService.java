@@ -14,7 +14,6 @@ public interface UserService {
     public UserDto updateUserPreferences(String uid, Map<String, Float> genrePreferences);
     public Map<String, Float> getUserPreferences(String uid);
 
-    long clearDeliveredArticles(String uid);
 
 /////
 /// 
