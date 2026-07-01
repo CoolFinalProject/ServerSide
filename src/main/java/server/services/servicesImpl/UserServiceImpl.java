@@ -40,10 +40,6 @@ public class UserServiceImpl implements UserService{
 		return UserConvertion.userEntityToDto(getUserEntityByUid(uid));
 	}
 
-	public UserDto getUserfromUid(String uid)
-	{
-		return getUserByUid(uid);
-	}
 	@Override
 	public UserDto authenticateByName(UserAuthenticateDto userAuthDto) 
 	{	
@@ -99,11 +95,6 @@ public class UserServiceImpl implements UserService{
 		return getUserByUid(uid).getGenrePreferences();
     }
 
-    @Override
-    public long clearDeliveredArticles(String uid) {
-        getUserfromUid(uid);
-        return deliveredRepository.deleteByUserId(uid);
-    }
 
 	@Override
 	public void deleteAllUsers() {

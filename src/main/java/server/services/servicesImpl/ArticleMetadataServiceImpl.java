@@ -56,6 +56,11 @@ public class ArticleMetadataServiceImpl implements ArticleMetadataService{
         Page<ArticleMetadataEntity> page = metadataRepository.findAll(pageable);
         return page.map(entity -> ArticleMetadataConvertion.entityToDto(entity));
     }
+    @Override
+    public long clearDeliveredArticles(String uid) {
+        userService.getUserByUid(uid);
+        return deliveredRepository.deleteByUserId(uid);
+    }
 
     @Override
     public List<ArticleMetadataDto> getPersonalizedFeed(String userId, int size) {

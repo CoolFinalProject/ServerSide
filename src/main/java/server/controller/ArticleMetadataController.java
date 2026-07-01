@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,11 @@ public class ArticleMetadataController {
             @RequestAttribute("firebaseUid") String uid,
             @RequestParam(defaultValue = "10",name = "size") int size) {
         return ResponseEntity.ok(metadataService.getPersonalizedFeed(uid, size));
+    }
+
+    @DeleteMapping(path = "/deliveredArticles")
+    public long clearDeliveredArticles(@RequestAttribute("firebaseUid") String uid) {
+        return metadataService.clearDeliveredArticles(uid);
     }
 
 }

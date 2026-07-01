@@ -13,4 +13,6 @@ public interface ArticleMetadataService {
     public Page<ArticleMetadataDto> getAllArticleMetadata(Pageable pageable);
 
     List<ArticleMetadataDto> getPersonalizedFeed(String userId, int size);
+    long clearDeliveredArticles(String uid);
+
 }

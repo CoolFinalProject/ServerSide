@@ -75,10 +75,4 @@ public class ArticleController {
 		}
         return sumArticles;
     }
-    @GetMapping("/personalizedFeed")
-    public ResponseEntity<List<SummarizedArticleDto>> pipelineTest(
-            @RequestAttribute("firebaseUid") String uid) {
-		return null;
-        //return ResponseEntity.ok(articleService.personalizedFeed(uid));
-    }
 }
