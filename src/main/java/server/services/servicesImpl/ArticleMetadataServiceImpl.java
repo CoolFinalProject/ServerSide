@@ -57,6 +57,11 @@ public class ArticleMetadataServiceImpl implements ArticleMetadataService{
         return page.map(entity -> ArticleMetadataConvertion.entityToDto(entity));
     }
         @Override
+    public Page<ArticleMetadataDto> getByCategory(String category, Pageable pageable) {
+        Page<ArticleMetadataEntity> page = metadataRepository.findByCategory(category, pageable);
+        return page.map(entity-> ArticleMetadataConvertion.entityToDto(entity));
+    }
+        @Override
     public ArticleMetadataDto getMetadataById(String articleId) {
         
         return ArticleMetadataConvertion.entityToDto(metadataRepository.findById(articleId).orElseThrow(()-> new server.exceptions.NotFoundException(articleId+" Not Found")));

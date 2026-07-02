@@ -1,5 +1,6 @@
 package server.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springdoc.core.annotations.ParameterObject;
+
 import server.DTO.ArticleDto.ArticleMetadataDto;
+import server.enums.ArticleCategory;
 import server.services.ArticleMetadataService;
 
 @RestController
@@ -26,8 +30,15 @@ public class ArticleMetadataController {
     }
 
     @GetMapping(path= "getAll")
-    public Page<ArticleMetadataDto> getAll(Pageable pageable) {
+    public Page<ArticleMetadataDto> getAll(@ParameterObject Pageable pageable) {
         return metadataService.getAllArticleMetadata(pageable);
+    }
+
+    @GetMapping(path = "categories")
+    public List<String> getCategories() {
+        return Arrays.stream(ArticleCategory.values())
+                .map(ArticleCategory::name)
+                .toList();
     }
 
     @GetMapping(path = "personalizedFeed")
@@ -35,6 +46,11 @@ public class ArticleMetadataController {
             @RequestAttribute("firebaseUid") String uid,
             @RequestParam(defaultValue = "10",name = "size") int size) {
         return ResponseEntity.ok(metadataService.getPersonalizedFeed(uid, size));
+    }
+    @GetMapping(path = "getByCategory")
+    public Page<ArticleMetadataDto> getByCategory(@RequestParam(required=true,name="category")String category, @ParameterObject Pageable pageable)
+    {
+        return metadataService.getByCategory(category, pageable);
     }
 
     @DeleteMapping(path = "/deliveredArticles")
