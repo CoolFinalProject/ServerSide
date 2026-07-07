@@ -5,14 +5,17 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import server.enums.ArticleCategory;
 
 @Service
@@ -73,8 +76,7 @@ public class OpenAiService {
 
     public String summarizeNeutral(String text) {
         String prompt = """
-                Summarize the following content in 3 bullet points, remove opinions/emotion, keep facts only.
-                Text:
+Act as an impartial wire service editor. Your task is to process the provided article and write a comprehensive, strictly neutral news summary. You must output the final summary in the exact same language as the original article text. To completely avoid copyright infringement, you must heavily paraphrase the original text. You are forbidden from copying phrases or sentences from the source material. Explain the facts using entirely new sentence structures and your own original wording. Do not reuse strings of more than three consecutive words from the original article, unless they are proper nouns, official entity names, or explicitly attributed direct quotes. Write entirely in standard paragraphs without using any bullet points, numbered lists, or markdown formatting. Strip away all editorializing, emotional language, and sensationalism. Report the core facts objectively without injecting moral judgments. Use an inverted pyramid style, starting with the most critical information in the opening paragraph, followed by supporting context in subsequent paragraphs. Provide a thorough summary that retains necessary nuance, aiming for a well-paced narrative of about 3 to 4 paragraphs.                            Text:
                 """ + text;
         return chat(prompt);
     }

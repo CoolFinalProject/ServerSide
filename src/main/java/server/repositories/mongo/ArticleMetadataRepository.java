@@ -17,4 +17,7 @@ public interface ArticleMetadataRepository extends MongoRepository<ArticleMetada
 
     @Query("{ 'categories': ?0 }")
     Page<ArticleMetadataEntity> findByCategory(String category, Pageable pageable);
+
+    @Query("{ 'source.title': { $regex: ?0, $options: 'i' } }")
+    Page<ArticleMetadataEntity> searchByTitle(String regex, Pageable pageable);
 }

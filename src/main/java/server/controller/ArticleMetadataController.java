@@ -53,6 +53,13 @@ public class ArticleMetadataController {
         return metadataService.getByCategory(category, pageable);
     }
 
+    @GetMapping(path = "search")
+    public Page<ArticleMetadataDto> search(
+            @RequestParam(name = "text", required = false, defaultValue = "") String text,
+            @ParameterObject Pageable pageable) {
+        return metadataService.searchArticles(text, pageable);
+    }
+
     @DeleteMapping(path = "/deliveredArticles")
     public long clearDeliveredArticles(@RequestAttribute("firebaseUid") String uid) {
         return metadataService.clearDeliveredArticles(uid);

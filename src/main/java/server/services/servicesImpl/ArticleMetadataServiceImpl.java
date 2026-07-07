@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,17 @@ public class ArticleMetadataServiceImpl implements ArticleMetadataService{
         Page<ArticleMetadataEntity> page = metadataRepository.findByCategory(category, pageable);
         return page.map(entity-> ArticleMetadataConvertion.entityToDto(entity));
     }
+
+    @Override
+    public Page<ArticleMetadataDto> searchArticles(String text, Pageable pageable) {
+        if (text == null || text.isBlank()) {
+            return getAllArticleMetadata(pageable);
+        }
+        String escaped = Pattern.quote(text.trim());
+        Page<ArticleMetadataEntity> page = metadataRepository.searchByTitle(escaped, pageable);
+        return page.map(ArticleMetadataConvertion::entityToDto);
+    }
+
         @Override
     public ArticleMetadataDto getMetadataById(String articleId) {
         
