@@ -47,6 +47,8 @@ dependencies {
 }
 
 tasks.named('test') {
+	environment 'GOOGLE_APPLICATION_CREDENTIALS', './serviceAccountKey.json'
+
 	useJUnitPlatform()
 }
 tasks.withType(JavaCompile).configureEach {
