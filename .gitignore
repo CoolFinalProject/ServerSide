@@ -41,3 +41,4 @@ out/
 __pycache__/
 venv/
 serviceAccountKey.json
+*.log
