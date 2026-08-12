@@ -36,13 +36,17 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
         String idToken = authHeader.substring("Bearer ".length());
 
         try {
-            FirebaseToken decoded = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken decoded =
+                    FirebaseAuth.getInstance().verifyIdToken(idToken);
+
             request.setAttribute("firebaseUid", decoded.getUid());
 
-            filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid Firebase token");
+            return;
         }
+
+        filterChain.doFilter(request, response);
     }
 }
