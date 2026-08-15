@@ -77,7 +77,12 @@ public class ArticleController {
 		for (ArticleDto article : articles) 
 		{
 			SummarizedArticleDto temp= new SummarizedArticleDto(article);
-			temp.setSummarizedText(openAi.summarizeNeutral(article.getText()));
+            temp.setSummarizedText(
+                    openAi.summarizeNeutral(
+                            article.getText(),
+                            OpenAiService.DEFAULT_SUMMARY_PROMPT
+                    )
+            );
 			sumArticles.add(temp);	
 		}
         return sumArticles;

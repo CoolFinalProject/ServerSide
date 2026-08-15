@@ -13,7 +13,8 @@ public interface UserService {
 	public UserDto updateUserData(String id,UserUpdateDto userToUpdate);
     public UserDto updateUserPreferences(String uid, Map<String, Float> genrePreferences);
     public Map<String, Float> getUserPreferences(String uid);
-
+    public String getUserSummaryPrompt(String uid);
+    public String updateSummaryPromptFromFeedback(String uid, String feedback);
 
 /////
 /// 

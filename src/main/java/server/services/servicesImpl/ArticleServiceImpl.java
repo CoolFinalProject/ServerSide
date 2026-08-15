@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Override
     public SummarizedArticleDto getSummarizedArticleForUser(String uid, String articleId) {
-        userService.getUserByUid(uid);
+        String summaryPrompt = userService.getUserSummaryPrompt(uid);
 
         ArticleDto articleDto = getRawArticleData(articleId);
         String text = articleDto.getText();
@@ -66,7 +66,9 @@ public class ArticleServiceImpl implements ArticleService{
 
         SummarizedArticleDto summarizedArticle = new SummarizedArticleDto(articleDto);
         summarizedArticle.setForUserId(uid);
-        summarizedArticle.setSummarizedText(openAiService.summarizeNeutral(text));
+        summarizedArticle.setSummarizedText(
+                openAiService.summarizeNeutral(text, summaryPrompt)
+        );
         return summarizedArticle;
     }
 

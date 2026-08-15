@@ -22,6 +22,7 @@ public class UserEntity {
     private Date creationTime;
 
     private Map<String, Float> genrePreferences;
+    private String summaryPrompt;
 
     public UserEntity(String userName, String passWord, String userId,
                       boolean active, UserRole userRole,
@@ -93,6 +94,9 @@ public class UserEntity {
     public void setGenrePreferences(Map<String, Float> genrePreferences) {
         this.genrePreferences = genrePreferences;
     }
+    public String getSummaryPrompt() { return summaryPrompt; }
+
+    public void setSummaryPrompt(String summaryPrompt) { this.summaryPrompt = summaryPrompt; }
 
     @Override
     public String toString() {

@@ -19,20 +19,36 @@ import server.enums.UserRole;
 import server.repositories.mongo.UserArticleDeliveredRepository;
 import server.repositories.mongo.UserRepository;
 import server.services.UserService;
+import server.helper.OpenAiService;
 @Service
 public class UserServiceImpl implements UserService{
 
-	UserRepository userRep;
+    private final OpenAiService openAiService;
+    UserRepository userRep;
 	UserArticleDeliveredRepository deliveredRepository;
 
-	public UserServiceImpl(UserRepository userRep, UserArticleDeliveredRepository deliveredRepository)
-	{
-		this.userRep=userRep;
-		this.deliveredRepository=deliveredRepository;
-	}
+    public UserServiceImpl(
+            UserRepository userRep,
+            UserArticleDeliveredRepository deliveredRepository,
+            OpenAiService openAiService
+    ) {
+        this.userRep = userRep;
+        this.deliveredRepository = deliveredRepository;
+        this.openAiService = openAiService;
+    }
 
 	private UserEntity getUserEntityByUid(String uid) {
-		return userRep.findById(uid).orElseThrow(() -> new server.exceptions.NotFoundException("User does not exist in server"));
+        UserEntity user = userRep.findById(uid)
+                .orElseThrow(() -> new server.exceptions.NotFoundException(
+                        "User does not exist in server"
+                ));
+
+        if (user.getSummaryPrompt() == null || user.getSummaryPrompt().isBlank()) {
+            user.setSummaryPrompt(OpenAiService.DEFAULT_SUMMARY_PROMPT);
+            userRep.save(user);
+        }
+
+        return user;
 	}
 
 	@Override
@@ -75,7 +91,9 @@ public class UserServiceImpl implements UserService{
 			user.setUserRole(UserRole.END_USER);
 			user.setUserId(uid);
 			user.setCreationTime(new Date());
-			userRep.save(UserConvertion.userDtoToEntity(user));
+            UserEntity entity = UserConvertion.userDtoToEntity(user);
+            entity.setSummaryPrompt(OpenAiService.DEFAULT_SUMMARY_PROMPT);
+            userRep.save(entity);
 			return user;
 		} catch (FirebaseAuthException e) {
 			throw new server.exceptions.BadRequestException("Invalid uid " + uid);
@@ -95,7 +113,25 @@ public class UserServiceImpl implements UserService{
 		return getUserByUid(uid).getGenrePreferences();
     }
 
+    @Override
+    public String getUserSummaryPrompt(String uid) {
+        return getUserEntityByUid(uid).getSummaryPrompt();
+    }
 
+    @Override
+    public String updateSummaryPromptFromFeedback(String uid, String feedback) {
+        UserEntity user = getUserEntityByUid(uid);
+
+        String updatedPrompt = openAiService.updateSummaryPrompt(
+                user.getSummaryPrompt(),
+                feedback
+        );
+
+        user.setSummaryPrompt(updatedPrompt);
+        userRep.save(user);
+
+        return updatedPrompt;
+    }
 	@Override
 	public void deleteAllUsers() {
 		userRep.deleteAll();

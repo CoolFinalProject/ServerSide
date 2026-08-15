@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import server.DTO.UserDto.UserDto;
 import server.services.UserService;
-
+import server.DTO.UserDto.SummaryFeedbackDto;
 
 @RestController
 @RequestMapping(path = {"/users"})
@@ -29,6 +29,20 @@ public class UserController {
 		return userService.signUpUser(uid);
 	}
 
+    @PostMapping(
+            path = "/summary-feedback",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public String submitSummaryFeedback(
+            @RequestAttribute("firebaseUid") String uid,
+            @RequestBody SummaryFeedbackDto feedbackDto
+    ) {
+        return userService.updateSummaryPromptFromFeedback(
+                uid,
+                feedbackDto.getFeedback()
+        );
+    }
 
     @PutMapping(
             path = "/preferences",
@@ -54,5 +68,10 @@ public class UserController {
     public Map<String, Float> getUserPreferences(@RequestAttribute("firebaseUid") String uid) {
         return userService.getUserPreferences(uid);
     }
-
+    @GetMapping("/summary-prompt")
+    public String getSummaryPrompt(
+            @RequestAttribute("firebaseUid") String uid
+    ) {
+        return userService.getUserSummaryPrompt(uid);
+    }
 }

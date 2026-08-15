@@ -24,7 +24,9 @@ public class AiController {
 
     @PostMapping("/summarize")
     public ResponseEntity<String> summarize(@RequestBody String text) {
-        return ResponseEntity.ok(openAi.summarizeNeutral(text));
+        return ResponseEntity.ok(
+                openAi.summarizeNeutral(text, OpenAiService.DEFAULT_SUMMARY_PROMPT)
+        );
     }
     @GetMapping("/classify")
     public List<ArticleCategory> classify(
