@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import server.DTO.ArticleDto.ArticleDto;
 import server.DTO.ArticleDto.ArticleMetadataDto;
 import server.DTO.ArticleDto.SummarizedArticleDto;
-import server.helper.OpenAiService;
 import server.helper.RssFetcher;
 import server.services.ArticleService;
 import server.services.ScrapeService;
-
+import server.services.OpenAiService;
 @RestController
 @RequestMapping(path= {"/article"})
 public class ArticleController {

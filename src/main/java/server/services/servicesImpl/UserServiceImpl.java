@@ -19,7 +19,7 @@ import server.enums.UserRole;
 import server.repositories.mongo.UserArticleDeliveredRepository;
 import server.repositories.mongo.UserRepository;
 import server.services.UserService;
-import server.helper.OpenAiService;
+import server.services.OpenAiService;
 @Service
 public class UserServiceImpl implements UserService{
 

@@ -2,9 +2,8 @@ package server.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.helper.OpenAiService;
 import server.enums.ArticleCategory;
-
+import server.services.OpenAiService;
 import java.util.List;
 
 @RestController

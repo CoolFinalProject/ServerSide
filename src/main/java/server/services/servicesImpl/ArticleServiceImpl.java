@@ -12,13 +12,12 @@ import server.DTO.ArticleDto.ArticleMetadataDto;
 import server.DTO.ArticleDto.SummarizedArticleDto;
 import server.convertions.ArticleConvertion;
 import server.entities.ArticleEntities.ArticleEntity;
-import server.helper.OpenAiService;
 import server.repositories.redis.ArticleRedisRepository;
 import server.services.ArticleMetadataService;
 import server.services.ArticleService;
 import server.services.ScrapeService;
 import server.services.UserService;
-
+import server.services.OpenAiService;
 @Service
 public class ArticleServiceImpl implements ArticleService{
 
