@@ -132,6 +132,15 @@ public class UserServiceImpl implements UserService{
 
         return updatedPrompt;
     }
+
+    @Override
+    public String resetSummaryPrompt(String uid) {
+        UserEntity user = getUserEntityByUid(uid);
+        user.setSummaryPrompt(OpenAiService.DEFAULT_SUMMARY_PROMPT);
+        userRep.save(user);
+        return OpenAiService.DEFAULT_SUMMARY_PROMPT;
+    }
+
 	@Override
 	public void deleteAllUsers() {
 		userRep.deleteAll();

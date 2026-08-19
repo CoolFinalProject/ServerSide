@@ -74,4 +74,14 @@ public class UserController {
     ) {
         return userService.getUserSummaryPrompt(uid);
     }
+
+    @PostMapping(
+            path = "/summary-prompt/reset",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public String resetSummaryPrompt(
+            @RequestAttribute("firebaseUid") String uid
+    ) {
+        return userService.resetSummaryPrompt(uid);
+    }
 }

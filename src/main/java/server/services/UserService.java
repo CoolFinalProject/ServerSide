@@ -15,6 +15,7 @@ public interface UserService {
     public Map<String, Float> getUserPreferences(String uid);
     public String getUserSummaryPrompt(String uid);
     public String updateSummaryPromptFromFeedback(String uid, String feedback);
+    public String resetSummaryPrompt(String uid);
 
 /////
 /// 
